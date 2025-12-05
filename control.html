@@ -423,8 +423,8 @@
       document.getElementById(mode === 'xyz' ? 'panel-xyz' : 'panel-joints').classList.add('active');
     }
 
-    const CONFIG = {
-      ROSBRIDGE_URL: (location.search.match(/rosbridge=([^&]+)/)?.[1]) || 'ws://localhost:9090',
+    let CONFIG = {
+      ROSBRIDGE_URL: 'ws://localhost:9090',
       NODE_RED_WS_URL: (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://8.215.67.35:1880/ws/robot',
       ROBOT_DESCRIPTION_PARAM: '/robot_description',
       FIXED_FRAME: 'base_link',
@@ -628,7 +628,14 @@
     // ==========================================
     //  INIT
     // ==========================================
-    if(CONFIG.AUTO_CONNECT){ wsConnect(); rosConnect(); }
+    fetch('config.json')
+      .then(r => r.json())
+      .then(data => { if(data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
+      .catch(() => { console.log('Using default IP'); })
+      .finally(() => {
+          if(CONFIG.AUTO_CONNECT){ wsConnect(); rosConnect(); }
+          log('System ready');
+      });
   </script>
 </body>
 </html>
