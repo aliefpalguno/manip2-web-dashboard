@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Robot Monitoring System</title>
+  <!-- Minimal, native stack. No frameworks. -->
+  <style>
+    :root{
+      /* Core Palette */
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --crit: #ef4444;
+      --crit-bg: #fef2f2;
+      --border: #e2e8f0;
+      
+      /* UI Vars */
+      --grid-gap: 20px;
+      --radius: 16px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--ink); 
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- Layout --- */
+    header{
+      display:flex; align-items:center; gap:18px; padding:0 24px; 
+      height: 64px;
+      background: #ffffff; 
+      border-bottom: 1px solid var(--border);
+      position:sticky; top:0; z-index:10;
+    }
+    header .burger{
+      width:32px; height:32px; border-radius:8px; 
+      display:grid; place-items:center; cursor:pointer; 
+      color: var(--muted); transition: background .2s;
+    }
+    header .burger:hover{ background: #f1f5f9; color: var(--ink); }
+    header h1{font-size:20px; font-weight:700; letter-spacing:-0.5px; margin:0; color: var(--ink);}
+    header .brand{margin-left:auto; font-size: 14px; font-weight:500; color: var(--muted);}
+
+    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - 64px)}
+    
+    /* --- Nav --- */
+    nav{
+      background: #ffffff; 
+      border-right: 1px solid var(--border);
+      padding: 20px 0; 
+      display:flex; flex-direction:column; align-items:center; gap:12px;
+    }
+    nav .dot{
+      width:44px; height:44px; border-radius:12px; 
+      background: transparent; 
+      display:grid; place-items:center; 
+      color: var(--muted); font-size:20px; 
+      cursor: pointer; transition: all .2s ease;
+      text-decoration: none; /* NEW: For links */
+    }
+    nav .dot:hover{ background: #f1f5f9; color: var(--primary); transform: scale(1.05); }
+    nav .dot.active{ background: #eff6ff; color: var(--primary); }
+
+    /* --- Main --- */
+    .main{padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%;}
+    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:var(--grid-gap)}
+    
+    /* Grid Spans */
+    .col-left { grid-column: span 7; display:flex; flex-direction:column; gap:var(--grid-gap); }
+    .col-right { grid-column: span 5; display:flex; flex-direction:column; gap:var(--grid-gap); }
+
+    /* --- Cards --- */
+    .card{
+      background: var(--panel); 
+      border-radius: var(--radius); 
+      box-shadow: var(--shadow); 
+      border: 1px solid var(--border);
+      overflow:hidden;
+      display: flex; flex-direction: column;
+    }
+    .card header{
+      position:unset; height: auto; border: none;
+      background: transparent; padding: 16px 20px; 
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .card .title{font-weight:600; font-size:15px; color: var(--ink);}
+    .card .body{padding:20px;}
+    .card .body.padless{padding:0}
+
+    /* --- Viz --- */
+    #viz3d{width:100%; height:400px; background:#111827; display:block;}
+    #camera{
+      width:100%; height:280px; 
+      background: #f8fafc; 
+      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+      background-size: 20px 20px;
+      display:grid; place-items:center; 
+      color: var(--muted); font-weight:500; font-size: 14px;
+    }
+
+    /* --- Table --- */
+    table{width:100%; border-collapse:collapse;}
+    th,td{padding:12px 16px; border-bottom:1px solid #f1f5f9; text-align:left; font-size:13px}
+    thead th{
+      background:#f8fafc; font-size:11px; 
+      text-transform:uppercase; letter-spacing:0.05em; 
+      font-weight: 600; color: var(--muted);
+    }
+    tbody tr:last-child td{border-bottom:none}
+    tbody tr:hover{background:#f8fafc}
+    .status{font-weight:600; border-radius: 99px; padding: 2px 8px; font-size: 11px; display: inline-block;}
+    .s-ok{color: #15803d; background: #dcfce7;}
+    .s-warn{color: #b45309; background: #fef3c7;}
+    .s-crit{color: #b91c1c; background: #fee2e2;}
+
+    /* --- Log --- */
+    #log{
+      font-family: 'JetBrains Mono', Consolas, monospace; 
+      font-size: 12px; line-height: 1.5;
+      background: #1e293b; color: #94a3b8; 
+      height: 120px; overflow: auto; 
+      padding: 12px; border-radius: 8px;
+      border: 1px solid #334155;
+    }
+    #log b{color: #60a5fa;}
+    #log .warn{color: #fbbf24;}
+    #log .crit{color: #f87171;}
+    #log .eval-ok { color: #4ade80; font-weight: bold; }
+    #log .eval-fail { color: #fb923c; font-weight: bold; }
+
+    /* --- REDESIGNED QUICK ACTIONS --- */
+    .qa-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .motion-control { display: flex; flex-direction: column; gap: 16px; }
+
+    .tabs { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+    .tab-btn {
+      flex: 1; border: none; background: transparent;
+      padding: 8px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; color: var(--muted);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    .panel-content { display: none; animation: fadeIn 0.2s ease; }
+    .panel-content.active { display: block; }
+    @keyframes fadeIn { from {opacity:0; transform:translateY(4px);} to {opacity:1; transform:translateY(0);} }
+
+    .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .input-grid.joints { grid-template-columns: repeat(3, 1fr); } 
+    
+    .field-group { position: relative; }
+    .field-group label {
+      display: block; font-size: 11px; font-weight: 600; 
+      color: var(--muted); margin-bottom: 4px; text-transform: uppercase;
+    }
+    .field-group input {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid var(--border); border-radius: 8px;
+      font-size: 14px; font-weight: 500; color: var(--ink);
+      outline: none; transition: border 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+    .field-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    .field-group .unit {
+      position: absolute; right: 12px; top: 29px;
+      font-size: 11px; color: #94a3b8; pointer-events: none;
+    }
+
+    .btn-action {
+      width: 100%; border: none; padding: 12px;
+      border-radius: 10px; cursor: pointer;
+      font-size: 14px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: transform 0.1s, opacity 0.2s;
+    }
+    .btn-action:active { transform: scale(0.98); }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 6px -2px rgba(59,130,246,0.3); }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .system-ops {
+      display: flex; flex-direction: column; gap: 20px;
+      border-left: 1px solid var(--border);
+      padding-left: 24px;
+    }
+
+    .sys-section h4 {
+      margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase;
+      color: #94a3b8; font-weight: 700; letter-spacing: 0.05em;
+    }
+    
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    
+    .btn-sec {
+      background: #fff; border: 1px solid var(--border); color: var(--ink);
+      padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-sec:hover { border-color: #cbd5e1; background: #f8fafc; }
+    
+    .btn-danger { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .btn-danger:hover { background: #fee2e2; border-color: #fca5a5; }
+    
+    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 12px; border-radius: 10px; }
+
+    .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 99px;
+      background: #f1f5f9; color: var(--muted);
+      border: 1px solid transparent;
+    }
+    .pill.active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .dot-ind { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    @media (max-width: 1200px) {
+      .grid { display: flex; flex-direction: column; }
+      .qa-container { grid-template-columns: 1fr; gap: 32px; }
+      .system-ops { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 24px; }
+    }
+    @media (max-width: 600px) {
+      .shell { grid-template-columns: 1fr; }
+      nav { display: none; }
+      .input-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="burger" title="Menu">☰</div>
+    <h1>Dashboard</h1>
+    <div class="brand">Robot Monitoring System</div>
+  </header>
+  
+  <div class="shell">
+    <nav>
+      <a href="index.html" class="dot active" title="Home">🏠</a>
+      <a href="control.html" class="dot" title="Control">🤖</a>
+      <a href="analytics.html" class="dot" title="Analytics">📈</a>
+      
+      <div class="dot" title="Camera">📷</div>
+      <div class="dot" title="DB">🗄️</div>
+      <div class="dot" title="Settings">⚙️</div>
+    </nav>
+
+    <main class="main">
+      <div class="grid">
+        
+        <!-- LEFT COLUMN -->
+        <div class="col-left">
+          <section class="card">
+            <header><div class="title">3D Visualization</div></header>
+            <div class="body padless"><div id="viz3d"></div></div>
+          </section>
+
+          <section class="card">
+            <header><div class="title">Joint Telemetry</div></header>
+            <div class="body padless" style="padding:0">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Joint</th>
+                    <th>Angle</th>
+                    <th>Temp</th>
+                    <th>Load (Stall%)</th>
+                    <th>Volt</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="servo-tbody">
+                  <!-- rows injected via JS -->
+                </tbody>
+              </table>
+            </div>
+            <div style="padding: 12px 20px; border-top:1px solid #f1f5f9">
+                <div id="log" aria-live="polite"></div>
+            </div>
+          </section>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="col-right">
+          <section class="card">
+            <header><div class="title">Quick Actions</div></header>
+            <div class="body">
+              <div class="qa-container">
+                
+                <!-- 1. Motion Control Panel -->
+                <div class="motion-control">
+                  <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('xyz')">📍 Coordinates</button>
+                    <button class="tab-btn" onclick="switchTab('joints')">🤖 Joints</button>
+                  </div>
+
+                  <div id="panel-xyz" class="panel-content active">
+                    <div class="input-grid">
+                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"><span class="unit">cm</span></div>
+                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"><span class="unit">cm</span></div>
+                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"><span class="unit">cm</span></div>
+                    </div>
+                    <button class="btn-action btn-primary" id="btn-send-xyz">Move to Coordinates ➜</button>
+                  </div>
+
+                  <div id="panel-joints" class="panel-content">
+                    <div class="input-grid joints">
+                      <div class="field-group"><label>J1</label><input type="number" id="j1" placeholder="0"><span class="unit">°</span></div>
+                      <div class="field-group"><label>J2</label><input type="number" id="j2" placeholder="0"><span class="unit">°</span></div>
+                      <div class="field-group"><label>J3</label><input type="number" id="j3" placeholder="0"><span class="unit">°</span></div>
+                      <div class="field-group"><label>J4</label><input type="number" id="j4" placeholder="0"><span class="unit">°</span></div>
+                      <div class="field-group"><label>J5</label><input type="number" id="j5" placeholder="0"><span class="unit">°</span></div>
+                    </div>
+                    <button class="btn-action btn-primary" id="btn-send-joints">Set Joint Angles ➜</button>
+                  </div>
+                </div>
+
+                <!-- 2. System Operations -->
+                <div class="system-ops">
+                  <div class="sys-section">
+                    <h4>Connection</h4>
+                    <div class="btn-grid">
+                      <button class="btn-sec" id="btn-connect">Connect</button>
+                      <button class="btn-sec" id="btn-disconnect">Disconnect</button>
+                    </div>
+                    <button class="btn-sec" id="btn-reconnect-port" style="width:100%; margin-top:8px; color:var(--muted)">↻ Reconnect Serial</button>
+                  </div>
+
+                  <div class="sys-section">
+                    <h4>Operations</h4>
+                    <div class="btn-grid">
+                      <button class="btn-sec" id="btn-initial">🏠 Home</button>
+                      <button class="btn-sec" id="btn-safety-reset">🛡️ Reset Safety</button>
+                    </div>
+                  </div>
+
+                  <div class="sys-section danger-zone">
+                    <h4 style="color:#ef4444">Danger Zone</h4>
+                    <div class="btn-grid">
+                      <button class="btn-sec btn-danger" id="btn-safe-shutdown">Safe Halt</button>
+                      <button class="btn-sec btn-danger" id="btn-force-shutdown">Force Off</button>
+                    </div>
+                  </div>
+
+                  <div class="status-bar">
+                    <div class="pill" id="pill-robot"><span class="dot-ind"></span> Robot</div>
+                    <div class="pill" id="pill-ws"><span class="dot-ind"></span> Gateway</div>
+                    <div class="pill" id="pill-ros"><span class="dot-ind"></span> Bridge</div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <header><div class="title">Live Camera</div></header>
+            <div class="body padless"><div id="camera">Waiting for stream...</div></div>
+          </section>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Vendor Libs -->
+  <script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.5/lib/eventemitter2.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ros3d@1/build/ros3d.min.js"></script>
+
+  <script>
+    function switchTab(mode) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if(mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+      else document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
+      document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
+      document.getElementById(mode === 'xyz' ? 'panel-xyz' : 'panel-joints').classList.add('active');
+    }
+
+    const CONFIG = {
+      ROSBRIDGE_URL: (location.search.match(/rosbridge=([^&]+)/)?.[1]) || 'ws://localhost:9090',
+      NODE_RED_WS_URL: (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://localhost:1880/ws/robot',
+      ROBOT_DESCRIPTION_PARAM: '/robot_description',
+      FIXED_FRAME: 'base_link',
+      URDF_PATH: (location.search.match(/urdfpath=([^&]+)/)?.[1]) || '/manip2_urdf_description/',
+      AUTO_CONNECT: true
+    };
+
+    const $ = sel => document.querySelector(sel);
+    const logEl = $('#log');
+    
+    // ==========================================
+    //  PERSISTENT LOGGING (SESSION STORAGE)
+    // ==========================================
+    function log(line, cls){
+        // 1. Save to Storage
+        const entry = { timestamp: Date.now(), line: line, cls: cls };
+        let history = [];
+        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
+        
+        history.push(entry);
+        if (history.length > 200) history.shift();
+        sessionStorage.setItem('robot_logs', JSON.stringify(history));
+
+        // 2. Render
+        const p = document.createElement('div');
+        if(cls) p.className = cls;
+        p.innerHTML = `> ${line}`;
+        logEl.appendChild(p);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function loadLogs() {
+        logEl.innerHTML = '';
+        let history = [];
+        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
+        history.forEach(entry => {
+            const p = document.createElement('div');
+            if(entry.cls) p.className = entry.cls;
+            p.innerHTML = `> ${entry.line}`;
+            logEl.appendChild(p);
+        });
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    // Load logs on init
+    loadLogs();
+
+
+    function setDot(type, on){
+      const el = $(`#pill-${type}`);
+      if(!el) return;
+      if(on) el.classList.add('active');
+      else el.classList.remove('active');
+    }
+
+    const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2,8));
+    function fmt(v, d=0){
+      if(v===undefined || v===null || Number.isNaN(+v)) return '—';
+      const f = Number(v).toFixed(d);
+      return (d ? f : parseFloat(f));
+    }
+
+    const tbody = document.getElementById('servo-tbody');
+    function ensureRow(i){
+      let tr = tbody.querySelector(`tr[data-i="${i}"]`);
+      if(tr) return tr;
+      tr = document.createElement('tr');
+      tr.setAttribute('data-i', i);
+      tr.innerHTML = `<td class="name" style="font-weight:500">J${i+1}</td><td class="deg">—</td><td class="temp">—</td><td class="load">—</td><td class="volt">—</td><td><span class="status s-ok">OK</span></td>`;
+      tbody.appendChild(tr);
+      return tr;
+    }
+
+    function updateFromTelemetry(payload){
+      if(!payload || !payload.joints) return;
+      const joints = payload.joints;
+      for(let i=0; i<joints.length; i++) ensureRow(i);
+
+      joints.forEach((j, i)=>{
+        const tr = ensureRow(i);
+        tr.querySelector('.deg').textContent  = fmt(j.pos_deg,0) + '°';
+        tr.querySelector('.temp').textContent = fmt(j.temp_c,0) + '°C';
+
+        // --- UPDATED LOAD LOGIC: Prioritize load_stl (Stall Load) ---
+        const load = (j.load_stl!==undefined) ? j.load_stl : (j.load_pct!==undefined) ? j.load_pct : undefined;
+        
+        tr.querySelector('.load').textContent = (load===undefined ? '—' : fmt(load,0) + '%');
+        tr.querySelector('.volt').textContent = fmt(j.volt_v,1) + 'V';
+
+        let status = 'OK', cls = 's-ok';
+        if (j.err_level && j.err_level !== 0) {
+          status = j.err || 'FAULT';
+          cls = (j.err_level >= 2) ? 's-crit' : 's-warn';
+        }
+        const stEl = tr.querySelector('.status');
+        stEl.textContent = status;
+        stEl.className = `status ${cls}`;
+      });
+    }
+
+    let ws = null, wsTimer = null;
+    function wsConnect(){
+      if(ws && (ws.readyState<=1)) return;
+      try{ ws = new WebSocket(CONFIG.NODE_RED_WS_URL); }catch(e){ log(`<b>WS:</b> ${e.message}`, 'crit'); return; }
+      ws.onopen = () => { setDot('ws', true); log('<b>WS:</b> connected'); ping(); };
+      ws.onclose = () => { setDot('ws', false); log('<b>WS:</b> disconnected','warn'); if(wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 1500); };
+      ws.onmessage = (ev) => {
+        let msg = null;
+        try{ msg = JSON.parse(ev.data); }catch{ }
+        if(!msg) return;
+
+        if(msg.type === 'telemetry' || msg.schema === 'manip2.v1') updateFromTelemetry(msg.type==='telemetry' ? msg.data : msg);
+        if(msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text || JSON.stringify(msg)}`, 'crit');
+        
+        if(msg.type === 'eval_result') {
+          const d = msg.data;
+          const cls = d.success ? 'eval-ok' : 'eval-fail';
+          const icon = d.success ? '✅' : '❌';
+          log(`${icon} <b>EVAL:</b> Dist ${fmt(d.final_dist_cm,2)}cm | Target [${fmt(d.target_x)},${fmt(d.target_y)},${fmt(d.target_z)}]`, cls);
+        }
+
+        if(msg.type === 'errors'){
+          const raw = msg.errors || [];
+          const bad = raw.filter(e => (e.level||0) !== 0 && (e.message||'OK').trim().toUpperCase() !== 'OK');
+          if (bad.length) log(`<b>ERR:</b> ${bad.map(e => e.message).join(' | ')}`, 'warn');
+        }
+
+        if(msg.type === 'status') setDot('robot', !!msg.robot_active);
+        if(msg.type === 'cmd_result') log(`<b>CMD:</b> ${msg.status} (${msg.message||''})`, msg.status==='ok' ? undefined : 'warn');
+      };
+    }
+
+    function ping(){ if(ws && ws.readyState===1){ ws.send(JSON.stringify({type:'ping', t:Date.now()})); setTimeout(ping, 10000); } }
+    function wsSend(obj){ if(ws && ws.readyState===1) ws.send(JSON.stringify(obj)); else log('<b>WS:</b> not connected','warn'); }
+
+    let ros = null, viewer = null, tfClient = null, urdfClient = null;
+    function rosConnect(){
+      if(ros && ros.isConnected) return;
+      ros = new ROSLIB.Ros({ url: CONFIG.ROSBRIDGE_URL });
+      ros.on('connection', ()=>{ setDot('ros', true); log('<b>ROS:</b> connected'); initViewer(); });
+      ros.on('error', ()=>{ setDot('ros', false); log('<b>ROS:</b> error', 'crit'); });
+      ros.on('close', ()=>{ setDot('ros', false); setTimeout(rosConnect, 2000); });
+    }
+
+    function initViewer(){
+      const el = document.getElementById('viz3d');
+      if(!viewer){
+        viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#111827' });
+        window.addEventListener('resize', ()=>{ if(viewer) viewer.resize(el.clientWidth, el.clientHeight); });
+        viewer.addObject(new ROS3D.Grid({ color: '#374151' }));
+      }
+      if(!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 15 });
+      if(!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
+    }
+
+    document.getElementById('btn-connect').onclick    = ()=>{ wsConnect(); rosConnect(); };
+    document.getElementById('btn-disconnect').onclick = ()=>{ try{ws.close();}catch{} };
+    document.getElementById('btn-initial').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'go_initial' });
+    document.getElementById('btn-safe-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safe_shutdown' });
+    document.getElementById('btn-force-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'force_shutdown' });
+    document.getElementById('btn-reconnect-port').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'reconnect_port' });
+    document.getElementById('btn-safety-reset').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safety_reset' });
+
+    document.getElementById('btn-send-joints').onclick = ()=>{
+      const vals = ['j1','j2','j3','j4','j5'].map(id=>parseFloat(document.getElementById(id).value));
+      if (vals.some(v => Number.isNaN(v))) { log('<b>UI:</b> Invalid joint inputs', 'warn'); return; }
+      wsSend({ type:'command', command_id:newCid(), cmd:'set_joint_deg', joints: vals });
+    };
+
+    document.getElementById('btn-send-xyz').onclick = ()=>{
+      const x = parseFloat(document.getElementById('in-x').value);
+      const y = parseFloat(document.getElementById('in-y').value);
+      const z = parseFloat(document.getElementById('in-z').value);
+      if([x,y,z].some(v=>Number.isNaN(v))){ log('<b>UI:</b> Invalid coordinates', 'warn'); return; }
+      wsSend({ type:'command', command_id:newCid(), cmd:'set_target_xyz', target:{x,y,z}, units:'cm' });
+    };
+
+    if(CONFIG.AUTO_CONNECT){ wsConnect(); rosConnect(); }
+    log('System ready');
+  </script>
+</body>
+</html>

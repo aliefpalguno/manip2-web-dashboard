@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Analytics - Robot Monitoring</title>
+  <!-- Reuse existing styles from index.html for consistency -->
+  <style>
+    :root{
+      --bg: #f3f4f6;
+      --panel: #ffffff;
+      --ink: #1e293b;
+      --muted: #64748b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --border: #e2e8f0;
+      --radius: 16px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--ink); 
+      background: var(--bg);
+    }
+
+    /* Layout */
+    header{
+      display:flex; align-items:center; gap:18px; padding:0 24px; 
+      height: 64px; background: #ffffff; 
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1{font-size:20px; font-weight:700; color: var(--ink); margin:0}
+    header .brand{margin-left:auto; font-size: 14px; font-weight:500; color: var(--muted);}
+
+    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - 64px)}
+
+    /* Nav */
+    nav{
+      background: #ffffff; border-right: 1px solid var(--border);
+      padding: 20px 0; display:flex; flex-direction:column; align-items:center; gap:12px;
+      position: sticky; top: 64px; height: calc(100vh - 64px);
+    }
+    nav .dot{
+      width:44px; height:44px; border-radius:12px; 
+      display:grid; place-items:center; 
+      color: var(--muted); font-size:20px; 
+      cursor: pointer; text-decoration: none; transition: all .2s;
+    }
+    nav .dot:hover{ background: #f1f5f9; color: var(--primary); }
+    nav .dot.active{ background: #eff6ff; color: var(--primary); }
+
+    /* Content */
+    .main{padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%;}
+    
+    .card{
+      background: var(--panel); border-radius: var(--radius); 
+      box-shadow: var(--shadow); border: 1px solid var(--border);
+      padding: 24px; margin-bottom: 24px;
+    }
+    
+    .card h2 { margin-top: 0; margin-bottom: 20px; font-size: 18px; color: var(--ink); }
+
+    .controls {
+        display: flex; gap: 16px; align-items: center; margin-bottom: 20px;
+    }
+    
+    .controls select {
+        padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border);
+        font-size: 14px; color: var(--ink); background: #fff;
+        min-width: 250px; cursor: pointer;
+    }
+
+    /* Graph Container */
+    .graph-container {
+        width: 100%; height: 500px; background: #f8fafc;
+        border-radius: 12px; overflow: hidden; position: relative;
+        border: 1px solid var(--border);
+    }
+    
+    iframe {
+        width: 100%; height: 100%; border: none;
+    }
+
+    .loading-msg {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        color: var(--muted); font-size: 14px; z-index: 0;
+    }
+
+    /* --- LOG STYLES --- */
+    #log {
+      font-family: 'JetBrains Mono', Consolas, monospace; 
+      font-size: 13px; line-height: 1.6;
+      background: #0f172a; color: #e2e8f0; /* Darker background for contrast */
+      height: 300px; overflow-y: auto; 
+      padding: 16px; border-radius: 12px;
+      border: 1px solid #334155;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+    #log .entry { border-bottom: 1px solid #1e293b; padding: 4px 0; }
+    #log .ts { color: #64748b; font-size: 11px; margin-right: 12px; font-feature-settings: "tnum"; user-select: none; }
+    
+    /* Log Colors */
+    #log b { color: #60a5fa; font-weight: 600; }
+    #log .warn .msg { color: #fbbf24; }
+    #log .crit .msg { color: #f87171; font-weight: bold; }
+    #log .eval-ok .msg { color: #4ade80; }
+    #log .eval-fail .msg { color: #fb923c; }
+    #log .info .msg { color: #94a3b8; }
+    
+    /* Scrollbar */
+    #log::-webkit-scrollbar { width: 8px; }
+    #log::-webkit-scrollbar-track { background: #1e293b; border-radius: 0 12px 12px 0;}
+    #log::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Analytics</h1>
+    <div class="brand">Robot Monitoring System</div>
+  </header>
+  
+  <div class="shell">
+    <nav>
+        <!-- Nav Links -->
+        <a href="index.html" class="dot" title="Home">🏠</a>
+        <a href="control.html" class="dot" title="Control">🤖</a> 
+        <a href="analytics.html" class="dot active" title="Analytics">📈</a>
+        <div class="dot" title="Camera">📷</div>
+        <div class="dot" title="DB">🗄️</div>
+    </nav>
+
+    <main class="main">
+      
+      <!-- Graph Card -->
+      <div class="card">
+        <h2>Performance Metrics</h2>
+        <div class="controls">
+            <label style="font-weight:600; font-size:14px; color:var(--muted)">Select Metric:</label>
+            <select id="metric-select">
+                <!-- Populated by JS -->
+            </select>
+            <div style="margin-left:auto; font-size:12px; color:var(--muted)" id="status-indicator">🔴 Disconnected</div>
+        </div>
+
+        <div class="graph-container">
+            <div class="loading-msg">Loading Visualization...</div>
+            <iframe id="grafana-frame" src=""></iframe>
+        </div>
+      </div>
+
+      <!-- Log Card -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <h2 style="margin:0">System Event Log</h2>
+            <button onclick="clearLog()" style="background:transparent; border:1px solid var(--border); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px; color:var(--muted);">Clear Log</button>
+        </div>
+        <div id="log" aria-live="polite">
+            <!-- Logs injected here -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURATION
+    // ============================================
+    const BASE_URL = "http://localhost:3000"; 
+    const NODE_RED_WS_URL = (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://localhost:1880/ws/robot';
+    const DASHBOARD_UID = "adwhg9g"; 
+    const SLUG = "manip2_remote_graph"; 
+    
+    const PANELS = {
+        "Joint Position (Deg)": 1,
+        "Joint Temperature (°C)": 2,
+        "Joint Load (%)": 3,
+        "Joint Voltage (V)": 4
+    };
+    
+    // ============================================
+    // GRAPH LOGIC
+    // ============================================
+    const select = document.getElementById('metric-select');
+    const iframe = document.getElementById('grafana-frame');
+
+    // Populate dropdown
+    Object.keys(PANELS).forEach(name => {
+        const opt = document.createElement('option');
+        opt.value = PANELS[name];
+        opt.textContent = name;
+        select.appendChild(opt);
+    });
+
+    function updateGraph() {
+        const panelId = select.value;
+        const theme = 'light'; 
+        const timeRange = '&from=now-30m&to=now'; 
+        const refresh = '&refresh=5s';
+        const url = `${BASE_URL}/d-solo/${DASHBOARD_UID}/${SLUG}?orgId=1&panelId=${panelId}${timeRange}${refresh}&theme=${theme}`;
+        iframe.src = url;
+    }
+
+    select.addEventListener('change', updateGraph);
+    if(Object.keys(PANELS).length > 0) updateGraph();
+
+
+    // ============================================
+    // PERSISTENT LOGGING & WEBSOCKET LOGIC
+    // ============================================
+    const logEl = document.getElementById('log');
+    const statusInd = document.getElementById('status-indicator');
+
+    function renderLogEntry(entry) {
+        const div = document.createElement('div');
+        div.className = `entry ${entry.cls || ''}`;
+        const ts = new Date(entry.timestamp).toLocaleTimeString('en-GB');
+        div.innerHTML = `<span class="ts">[${ts}]</span><span class="msg">${entry.line}</span>`;
+        logEl.appendChild(div);
+    }
+
+    function loadLogs() {
+        logEl.innerHTML = '';
+        let history = [];
+        try {
+            history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]');
+        } catch(e) {}
+        history.forEach(renderLogEntry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function log(line, cls){
+        // 1. Save to Storage
+        const entry = { timestamp: Date.now(), line: line, cls: cls };
+        let history = [];
+        try {
+            history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]');
+        } catch(e) {}
+        
+        history.push(entry);
+        if (history.length > 200) history.shift();
+        sessionStorage.setItem('robot_logs', JSON.stringify(history));
+
+        // 2. Render immediately
+        renderLogEntry(entry);
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+        sessionStorage.removeItem('robot_logs');
+        logEl.innerHTML = '';
+        log('Log cleared', 'warn');
+    }
+
+    // Init
+    loadLogs();
+    
+    let ws = null, wsTimer = null;
+
+    function wsConnect(){
+      if(ws && (ws.readyState<=1)) return;
+      try { ws = new WebSocket(NODE_RED_WS_URL); } catch(e) { log(`<b>WS Error:</b> ${e.message}`, 'crit'); return; }
+      
+      ws.onopen = () => { 
+          statusInd.textContent = "🟢 Connected"; statusInd.style.color = "var(--ok)";
+          log('<b>WS:</b> Connected', 'eval-ok'); ping(); 
+      };
+      ws.onclose = () => { 
+          statusInd.textContent = "🔴 Disconnected"; statusInd.style.color = "var(--crit)";
+          log('<b>WS:</b> Connection lost', 'warn'); 
+          if(wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 3000); 
+      };
+
+      ws.onmessage = (ev) => {
+        let msg = null;
+        try{ msg = JSON.parse(ev.data); }catch{ }
+        if(!msg) return;
+        
+        if(msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text || JSON.stringify(msg)}`, 'crit');
+        
+        if(msg.type === 'eval_result') {
+          const d = msg.data;
+          const cls = d.success ? 'eval-ok' : 'eval-fail';
+          const icon = d.success ? '✅' : '❌';
+          const dist = d.final_dist_cm ? Number(d.final_dist_cm).toFixed(2) : '?';
+          log(`${icon} <b>EVAL:</b> Dist ${dist}cm`, cls);
+        }
+
+        if(msg.type === 'errors'){
+          const raw = msg.errors || [];
+          const bad = raw.filter(e => (e.level||0) !== 0 && (e.message||'OK').trim().toUpperCase() !== 'OK');
+          if (bad.length) log(`<b>ERR:</b> ${bad.map(e => e.message).join(' | ')}`, 'warn');
+        }
+
+        if(msg.type === 'cmd_result') {
+            const isErr = msg.status !== 'ok';
+            log(`<b>CMD:</b> ${msg.status.toUpperCase()} - ${msg.message||''}`, isErr ? 'warn' : 'info');
+        }
+      };
+    }
+
+    function ping(){ if(ws && ws.readyState===1){ ws.send(JSON.stringify({type:'ping', t:Date.now()})); setTimeout(ping, 10000); } }
+    wsConnect();
+
+  </script>
+</body>
+</html>
