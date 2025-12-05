@@ -398,7 +398,7 @@
 
     const CONFIG = {
       ROSBRIDGE_URL: (location.search.match(/rosbridge=([^&]+)/)?.[1]) || 'ws://localhost:9090',
-      NODE_RED_WS_URL: (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://nodered:1880/ws/robot',
+      NODE_RED_WS_URL: (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://8.215.67.35:1880/ws/robot',
       ROBOT_DESCRIPTION_PARAM: '/robot_description',
       FIXED_FRAME: 'base_link',
       URDF_PATH: (location.search.match(/urdfpath=([^&]+)/)?.[1]) || '/manip2_urdf_description/',
