@@ -2,265 +2,315 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Robot Monitoring System</title>
-  <!-- Minimal, native stack. No frameworks. -->
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root{
       /* Core Palette */
-      --bg: #f3f4f6;
+      --bg: #f8fafc;
       --panel: #ffffff;
-      --ink: #1e293b;
+      --ink: #0f172a;
       --muted: #64748b;
-      --primary: #3b82f6;
-      --primary-dark: #2563eb;
-      --ok: #22c55e;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-dark: #1d4ed8;
+      --ok: #10b981;
       --warn: #f59e0b;
       --crit: #ef4444;
-      --crit-bg: #fef2f2;
       --border: #e2e8f0;
       
       /* UI Vars */
-      --grid-gap: 20px;
-      --radius: 16px;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --header-h: 64px;
+      --radius: 12px;
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
     
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; 
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', sans-serif;
       color: var(--ink); 
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden; /* Prevent horizontal scroll */
     }
 
-    /* --- Layout --- */
+    /* --- Header --- */
     header{
-      display:flex; align-items:center; gap:18px; padding:0 24px; 
-      height: 64px;
-      background: #ffffff; 
+      display:flex; align-items:center; gap:16px; padding:0 20px; 
+      height: var(--header-h);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      position:sticky; top:0; z-index:10;
+      position:sticky; top:0; z-index:50;
     }
-    header .burger{
-      width:32px; height:32px; border-radius:8px; 
-      display:grid; place-items:center; cursor:pointer; 
-      color: var(--muted); transition: background .2s;
-    }
-    header .burger:hover{ background: #f1f5f9; color: var(--ink); }
-    header h1{font-size:20px; font-weight:700; letter-spacing:-0.5px; margin:0; color: var(--ink);}
-    header .brand{margin-left:auto; font-size: 14px; font-weight:500; color: var(--muted);}
-
-    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - 64px)}
     
-    /* --- Nav --- */
-    nav{
-      background: #ffffff; 
+    header h1{
+      font-size:18px; font-weight:700; margin:0; 
+      background: linear-gradient(135deg, var(--ink) 0%, #475569 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header .brand{margin-left:auto; font-size: 13px; font-weight:500; color: var(--muted); display: flex; align-items: center; gap: 6px;}
+
+    /* Menu Button (Sandwich) */
+    .menu-toggle {
+        display: none; /* Hidden on desktop */
+        background: none; border: none; font-size: 24px; cursor: pointer; color: var(--ink); padding: 4px;
+    }
+
+    /* --- Layout Shell --- */
+    .shell{
+        display: flex;
+        min-height: calc(100vh - var(--header-h));
+    }
+    
+    /* --- Nav (Sidebar) --- */
+    nav {
+      width: 72px;
+      background: var(--panel); 
       border-right: 1px solid var(--border);
-      padding: 20px 0; 
-      display:flex; flex-direction:column; align-items:center; gap:12px;
+      padding: 24px 0; 
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      position: sticky; top: var(--header-h); height: calc(100vh - var(--header-h));
+      z-index: 40;
+      transition: transform 0.3s ease;
     }
-    nav .dot{
-      width:44px; height:44px; border-radius:12px; 
-      background: transparent; 
-      display:grid; place-items:center; 
-      color: var(--muted); font-size:20px; 
-      cursor: pointer; transition: all .2s ease;
-      text-decoration: none; /* NEW: For links */
-    }
-    nav .dot:hover{ background: #f1f5f9; color: var(--primary); transform: scale(1.05); }
-    nav .dot.active{ background: #eff6ff; color: var(--primary); }
-
-    /* --- Main --- */
-    .main{padding: 24px; max-width: 1600px; margin: 0 auto; width: 100%;}
-    .grid{display:grid; grid-template-columns: repeat(12, 1fr); gap:var(--grid-gap)}
     
-    /* Grid Spans */
-    .col-left { grid-column: span 7; display:flex; flex-direction:column; gap:var(--grid-gap); }
-    .col-right { grid-column: span 5; display:flex; flex-direction:column; gap:var(--grid-gap); }
+    nav .dot {
+      width: 48px; height: 48px; border-radius: 12px; 
+      display: grid; place-items: center; 
+      color: var(--muted); font-size: 22px; 
+      cursor: pointer; text-decoration: none; 
+      transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    nav .dot:hover { background: var(--bg); color: var(--primary); }
+    nav .dot.active { background: var(--primary-light); color: var(--primary); box-shadow: inset 0 0 0 1px rgba(37,99,235,0.1); }
+
+    /* --- Main Content --- */
+    .main {
+        flex: 1;
+        padding: 24px;
+        width: 100%;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 24px;
+    }
+    
+    /* Responsive Spans */
+    .col-left { grid-column: span 7; display:flex; flex-direction:column; gap: 24px; }
+    .col-right { grid-column: span 5; display:flex; flex-direction:column; gap: 24px; }
 
     /* --- Cards --- */
-    .card{
+    .card {
       background: var(--panel); 
       border-radius: var(--radius); 
       box-shadow: var(--shadow); 
       border: 1px solid var(--border);
-      overflow:hidden;
+      overflow: hidden;
       display: flex; flex-direction: column;
+      transition: box-shadow 0.2s;
     }
-    .card header{
-      position:unset; height: auto; border: none;
-      background: transparent; padding: 16px 20px; 
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .card .title{font-weight:600; font-size:15px; color: var(--ink);}
-    .card .body{padding:20px;}
-    .card .body.padless{padding:0}
+    .card:hover { box-shadow: var(--shadow-lg); }
 
-    /* --- Viz --- */
-    #viz3d{width:100%; height:400px; background:#111827; display:block;}
-    #camera{
-      width:100%; height:280px; 
-      background: #f8fafc; 
-      background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+    .card header {
+      height: auto; border-bottom: 1px solid var(--bg);
+      background: transparent; padding: 16px 20px; 
+    }
+    .card .title {
+        font-weight: 600; font-size: 15px; color: var(--ink); 
+        display: flex; align-items: center; gap: 8px;
+    }
+    /* Title Icon styling (optional visual flair) */
+    .card .title::before {
+        content: ''; display: inline-block; width: 4px; height: 16px; 
+        background: var(--primary); border-radius: 2px;
+    }
+
+    .card .body { padding: 20px; }
+    .card .body.padless { padding: 0; }
+
+    /* --- Visualizations --- */
+    #viz3d { width: 100%; height: 400px; background: #0f172a; display: block; }
+    #camera {
+      width: 100%; height: 280px; 
+      background: #f1f5f9; 
+      background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
       background-size: 20px 20px;
-      display:grid; place-items:center; 
-      color: var(--muted); font-weight:500; font-size: 14px;
+      display: grid; place-items: center; 
+      color: var(--muted); font-weight: 500; font-size: 14px;
     }
 
     /* --- Table --- */
-    table{width:100%; border-collapse:collapse;}
-    th,td{padding:12px 16px; border-bottom:1px solid #f1f5f9; text-align:left; font-size:13px}
-    thead th{
-      background:#f8fafc; font-size:11px; 
-      text-transform:uppercase; letter-spacing:0.05em; 
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--bg); text-align: left; font-size: 14px; }
+    thead th {
+      background: var(--bg); font-size: 12px; 
+      text-transform: uppercase; letter-spacing: 0.05em; 
       font-weight: 600; color: var(--muted);
     }
-    tbody tr:last-child td{border-bottom:none}
-    tbody tr:hover{background:#f8fafc}
-    .status{font-weight:600; border-radius: 99px; padding: 2px 8px; font-size: 11px; display: inline-block;}
-    .s-ok{color: #15803d; background: #dcfce7;}
-    .s-warn{color: #b45309; background: #fef3c7;}
-    .s-crit{color: #b91c1c; background: #fee2e2;}
-
-    /* --- Log --- */
-    #log{
-      font-family: 'JetBrains Mono', Consolas, monospace; 
-      font-size: 12px; line-height: 1.5;
-      background: #1e293b; color: #94a3b8; 
-      height: 120px; overflow: auto; 
-      padding: 12px; border-radius: 8px;
-      border: 1px solid #334155;
+    tbody tr:last-child td { border-bottom: none; }
+    .status {
+        font-weight: 600; border-radius: 6px; padding: 4px 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;
     }
-    #log b{color: #60a5fa;}
-    #log .warn{color: #fbbf24;}
-    #log .crit{color: #f87171;}
-    #log .eval-ok { color: #4ade80; font-weight: bold; }
-    #log .eval-fail { color: #fb923c; font-weight: bold; }
+    .s-ok { color: #065f46; background: #d1fae5; }
+    .s-warn { color: #92400e; background: #fef3c7; }
+    .s-crit { color: #991b1b; background: #fee2e2; }
 
-    /* --- REDESIGNED QUICK ACTIONS --- */
-    .qa-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
+    /* --- Action Panels --- */
+    .qa-container { display: flex; flex-direction: column; gap: 24px; }
     .motion-control { display: flex; flex-direction: column; gap: 16px; }
 
-    .tabs { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+    /* Tabs */
+    .tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; }
     .tab-btn {
       flex: 1; border: none; background: transparent;
-      padding: 8px; border-radius: 8px;
+      padding: 10px; border-radius: 8px;
       font-size: 13px; font-weight: 600; color: var(--muted);
       cursor: pointer; transition: all 0.2s;
     }
-    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow); }
 
     .panel-content { display: none; animation: fadeIn 0.2s ease; }
     .panel-content.active { display: block; }
     @keyframes fadeIn { from {opacity:0; transform:translateY(4px);} to {opacity:1; transform:translateY(0);} }
 
+    /* Inputs */
     .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-    .input-grid.joints { grid-template-columns: repeat(3, 1fr); } 
-    
-    .field-group { position: relative; }
     .field-group label {
-      display: block; font-size: 11px; font-weight: 600; 
-      color: var(--muted); margin-bottom: 4px; text-transform: uppercase;
+      display: block; font-size: 11px; font-weight: 700; 
+      color: var(--muted); margin-bottom: 6px; text-transform: uppercase;
     }
     .field-group input {
-      width: 100%; padding: 10px 12px;
+      width: 100%; padding: 12px;
       border: 1px solid var(--border); border-radius: 8px;
-      font-size: 14px; font-weight: 500; color: var(--ink);
+      font-size: 15px; font-weight: 500; color: var(--ink);
       outline: none; transition: border 0.2s, box-shadow 0.2s;
       background: #fff;
     }
-    .field-group input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-    .field-group .unit {
-      position: absolute; right: 12px; top: 29px;
-      font-size: 11px; color: #94a3b8; pointer-events: none;
-    }
+    .field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
 
+    /* Buttons */
     .btn-action {
-      width: 100%; border: none; padding: 12px;
+      width: 100%; border: none; padding: 14px;
       border-radius: 10px; cursor: pointer;
       font-size: 14px; font-weight: 600;
       display: flex; align-items: center; justify-content: center; gap: 8px;
       transition: transform 0.1s, opacity 0.2s;
+      touch-action: manipulation; /* Improves touch response */
     }
-    .btn-action:active { transform: scale(0.98); }
-    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 6px -2px rgba(59,130,246,0.3); }
+    .btn-action:active { transform: scale(0.97); }
+    .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
-
-    .system-ops {
-      display: flex; flex-direction: column; gap: 20px;
-      border-left: 1px solid var(--border);
-      padding-left: 24px;
-    }
-
-    .sys-section h4 {
-      margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase;
-      color: #94a3b8; font-weight: 700; letter-spacing: 0.05em;
-    }
     
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .btn-sec {
       background: #fff; border: 1px solid var(--border); color: var(--ink);
-      padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
     }
-    .btn-sec:hover { border-color: #cbd5e1; background: #f8fafc; }
-    
-    .btn-danger { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .btn-sec:hover { background: var(--bg); border-color: #cbd5e1; }
+    .btn-danger { background: #fff1f2; border-color: #fecaca; color: #dc2626; }
     .btn-danger:hover { background: #fee2e2; border-color: #fca5a5; }
-    
-    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 12px; border-radius: 10px; }
+
+    /* System Ops */
+    .system-ops { display: flex; flex-direction: column; gap: 20px; border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; }
+    .sys-section h4 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
+    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 16px; border-radius: 12px; }
 
     .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
     .pill {
       display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 600;
-      padding: 4px 10px; border-radius: 99px;
-      background: #f1f5f9; color: var(--muted);
+      font-size: 12px; font-weight: 600;
+      padding: 6px 12px; border-radius: 99px;
+      background: var(--bg); color: var(--muted);
       border: 1px solid transparent;
     }
     .pill.active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-    .dot-ind { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .dot-ind { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
-    @media (max-width: 1200px) {
-      .grid { display: flex; flex-direction: column; }
-      .qa-container { grid-template-columns: 1fr; gap: 32px; }
-      .system-ops { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 24px; }
+    /* Log */
+    #log {
+      font-family: 'JetBrains Mono', monospace; 
+      font-size: 12px; line-height: 1.5;
+      background: #0f172a; color: #94a3b8; 
+      height: 150px; overflow-y: auto; 
+      padding: 12px; border-radius: 8px;
     }
-    @media (max-width: 600px) {
-      .shell { grid-template-columns: 1fr; }
-      nav { display: none; }
-      .input-grid { grid-template-columns: 1fr 1fr; }
+
+    /* --- MOBILE RESPONSIVE MEDIA QUERIES --- */
+    @media (max-width: 1024px) {
+        .grid { grid-template-columns: 1fr; }
+        .col-left, .col-right { grid-column: auto; }
+    }
+
+    @media (max-width: 768px) {
+        /* Header */
+        header { justify-content: space-between; padding: 0 16px; }
+        .menu-toggle { display: block; }
+        .brand { display: none; } 
+        
+        /* Navigation (Drawer) */
+        nav {
+            position: fixed; top: var(--header-h); left: 0;
+            width: 100%; height: calc(100vh - var(--header-h));
+            background: var(--panel);
+            flex-direction: row; justify-content: space-around; align-items: flex-start;
+            padding: 24px;
+            transform: translateY(-100%); /* Hidden by default (slide up) */
+            opacity: 0; pointer-events: none;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+            z-index: 1000; /* FIXED: High z-index to overlay everything */
+        }
+        nav.open {
+            transform: translateY(0);
+            opacity: 1; pointer-events: auto;
+        }
+        nav .dot {
+            width: 60px; height: 60px; font-size: 28px;
+            background: var(--bg);
+        }
+
+        /* Content */
+        .main { padding: 16px; }
+        .grid { gap: 16px; display: flex; flex-direction: column; } /* FIXED: Ensure column layout */
+        
+        /* Cards */
+        .card { border-radius: 12px; }
+        #viz3d { height: 300px; }
+        
+        /* Inputs */
+        .input-grid { gap: 16px; }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="burger" title="Menu">☰</div>
+    <!-- Hamburger Menu Button -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <h1>Dashboard</h1>
-    <div class="brand">Robot Monitoring System</div>
+    <div class="brand">Robot Monitoring UNPAD <span style="font-size:10px; padding:2px 6px; background:var(--primary-light); color:var(--primary); border-radius:4px;">v2.0</span></div>
   </header>
   
   <div class="shell">
-    <nav>
+    <nav id="navbar">
       <a href="index.html" class="dot active" title="Home">🏠</a>
       <a href="control.html" class="dot" title="Control">🤖</a>
       <a href="analytics.html" class="dot" title="Analytics">📈</a>
-      
-      <div class="dot" title="Camera">📷</div>
-      <div class="dot" title="DB">🗄️</div>
-      <div class="dot" title="Settings">⚙️</div>
     </nav>
 
     <main class="main">
@@ -275,24 +325,26 @@
 
           <section class="card">
             <header><div class="title">Joint Telemetry</div></header>
-            <div class="body padless" style="padding:0">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Joint</th>
-                    <th>Angle</th>
-                    <th>Temp</th>
-                    <th>Load (Stall%)</th>
-                    <th>Volt</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="servo-tbody">
-                  <!-- rows injected via JS -->
-                </tbody>
-              </table>
+            <div class="body padless">
+              <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Joint</th>
+                        <th>Angle</th>
+                        <th>Temp</th>
+                        <th>Load</th>
+                        <th>Volt</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody id="servo-tbody">
+                    <!-- rows injected via JS -->
+                    </tbody>
+                </table>
+              </div>
             </div>
-            <div style="padding: 12px 20px; border-top:1px solid #f1f5f9">
+            <div style="padding: 16px; border-top:1px solid var(--border)">
                 <div id="log" aria-live="polite"></div>
             </div>
           </section>
@@ -314,20 +366,20 @@
 
                   <div id="panel-xyz" class="panel-content active">
                     <div class="input-grid">
-                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"><span class="unit">cm</span></div>
-                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"><span class="unit">cm</span></div>
-                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"><span class="unit">cm</span></div>
+                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"></div>
+                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"></div>
+                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-xyz">Move to Coordinates ➜</button>
                   </div>
 
                   <div id="panel-joints" class="panel-content">
-                    <div class="input-grid joints">
-                      <div class="field-group"><label>J1</label><input type="number" id="j1" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J2</label><input type="number" id="j2" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J3</label><input type="number" id="j3" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J4</label><input type="number" id="j4" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J5</label><input type="number" id="j5" placeholder="0"><span class="unit">°</span></div>
+                    <div class="input-grid joints" style="grid-template-columns: repeat(3, 1fr);">
+                      <div class="field-group"><label>J1</label><input type="number" id="j1" placeholder="0"></div>
+                      <div class="field-group"><label>J2</label><input type="number" id="j2" placeholder="0"></div>
+                      <div class="field-group"><label>J3</label><input type="number" id="j3" placeholder="0"></div>
+                      <div class="field-group"><label>J4</label><input type="number" id="j4" placeholder="0"></div>
+                      <div class="field-group"><label>J5</label><input type="number" id="j5" placeholder="0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-joints">Set Joint Angles ➜</button>
                   </div>
@@ -341,14 +393,14 @@
                       <button class="btn-sec" id="btn-connect">Connect</button>
                       <button class="btn-sec" id="btn-disconnect">Disconnect</button>
                     </div>
-                    <button class="btn-sec" id="btn-reconnect-port" style="width:100%; margin-top:8px; color:var(--muted)">↻ Reconnect Serial</button>
+                    <button class="btn-sec" id="btn-reconnect-port" style="width:100%; margin-top:12px; color:var(--muted)">↻ Reconnect Serial Port</button>
                   </div>
 
                   <div class="sys-section">
                     <h4>Operations</h4>
                     <div class="btn-grid">
-                      <button class="btn-sec" id="btn-initial">🏠 Home</button>
-                      <button class="btn-sec" id="btn-safety-reset">🛡️ Reset Safety</button>
+                      <button class="btn-sec" id="btn-initial">Home Position</button>
+                      <button class="btn-sec" id="btn-safety-reset">Reset Safety</button>
                     </div>
                   </div>
 
@@ -388,6 +440,14 @@
   <script src="https://cdn.jsdelivr.net/npm/ros3d@1/build/ros3d.min.js"></script>
 
   <script>
+    // --- UI LOGIC ---
+    function toggleMenu() {
+        const nav = document.getElementById('navbar');
+        nav.classList.toggle('open');
+        const btn = document.querySelector('.menu-toggle');
+        btn.textContent = nav.classList.contains('open') ? '✕' : '☰';
+    }
+
     function switchTab(mode) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       if(mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
@@ -396,6 +456,7 @@
       document.getElementById(mode === 'xyz' ? 'panel-xyz' : 'panel-joints').classList.add('active');
     }
 
+    // --- ROBOT LOGIC (UNCHANGED) ---
     let CONFIG = {
       ROSBRIDGE_URL: 'ws://localhost:9090',
       NODE_RED_WS_URL: (location.search.match(/nodered=([^&]+)/)?.[1]) || 'ws://8.215.67.35:1880/ws/robot',
@@ -466,7 +527,7 @@
       if(tr) return tr;
       tr = document.createElement('tr');
       tr.setAttribute('data-i', i);
-      tr.innerHTML = `<td class="name" style="font-weight:500">J${i+1}</td><td class="deg">—</td><td class="temp">—</td><td class="load">—</td><td class="volt">—</td><td><span class="status s-ok">OK</span></td>`;
+      tr.innerHTML = `<td class="name" style="font-weight:600">J${i+1}</td><td class="deg">—</td><td class="temp">—</td><td class="load">—</td><td class="volt">—</td><td><span class="status s-ok">OK</span></td>`;
       tbody.appendChild(tr);
       return tr;
     }
@@ -545,9 +606,9 @@
     function initViewer(){
       const el = document.getElementById('viz3d');
       if(!viewer){
-        viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#111827' });
+        viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#0f172a' });
         window.addEventListener('resize', ()=>{ if(viewer) viewer.resize(el.clientWidth, el.clientHeight); });
-        viewer.addObject(new ROS3D.Grid({ color: '#374151' }));
+        viewer.addObject(new ROS3D.Grid({ color: '#334155' }));
       }
       if(!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 15 });
       if(!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });

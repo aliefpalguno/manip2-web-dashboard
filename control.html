@@ -2,79 +2,85 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Robot Control Center</title>
-  <!-- Minimal, native stack. No frameworks. Sharing styles with index.html -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <style>
     :root{
       /* Core Palette */
-      --bg: #f3f4f6;
+      --bg: #f8fafc;
       --panel: #ffffff;
-      --ink: #1e293b;
+      --ink: #0f172a;
       --muted: #64748b;
-      --primary: #3b82f6;
-      --primary-dark: #2563eb;
-      --ok: #22c55e;
+      --primary: #2563eb;
+      --primary-light: #eff6ff;
+      --primary-dark: #1d4ed8;
+      --ok: #10b981;
       --warn: #f59e0b;
       --crit: #ef4444;
-      --crit-bg: #fef2f2;
       --border: #e2e8f0;
       
       /* UI Vars */
-      --grid-gap: 24px;
-      --radius: 16px;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --header-h: 64px;
+      --radius: 12px;
+      --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
     
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0; 
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', sans-serif;
       color: var(--ink); 
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
     /* --- Layout --- */
     header{
-      display:flex; align-items:center; gap:18px; padding:0 24px; 
-      height: 64px;
-      background: #ffffff; 
+      display:flex; align-items:center; gap:16px; padding:0 20px; 
+      height: var(--header-h);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      position:sticky; top:0; z-index:10;
+      position:sticky; top:0; z-index:50;
     }
-    header h1{font-size:20px; font-weight:700; letter-spacing:-0.5px; margin:0; color: var(--ink);}
-    header .brand{margin-left:auto; font-size: 14px; font-weight:500; color: var(--muted);}
+    header h1{ font-size:18px; font-weight:700; margin:0; }
+    header .brand{margin-left:auto; font-size: 13px; font-weight:500; color: var(--muted);}
+    
+    .menu-toggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--ink); padding:4px; }
 
-    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - 64px)}
+    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - var(--header-h));}
     
     /* --- Nav --- */
     nav{
-      background: #ffffff; 
-      border-right: 1px solid var(--border);
-      padding: 20px 0; 
-      display:flex; flex-direction:column; align-items:center; gap:12px;
+      background: var(--panel); border-right: 1px solid var(--border);
+      padding: 24px 0; display:flex; flex-direction:column; align-items:center; gap:16px;
+      position: sticky; top: var(--header-h); height: calc(100vh - var(--header-h));
+      z-index: 40;
     }
     nav .dot{
-      width:44px; height:44px; border-radius:12px; 
-      background: transparent; 
+      width:48px; height:48px; border-radius:12px; 
       display:grid; place-items:center; 
-      color: var(--muted); font-size:20px; 
-      cursor: pointer; transition: all .2s ease;
+      color: var(--muted); font-size:22px; 
+      cursor: pointer; transition: all .2s;
       text-decoration: none;
     }
-    nav .dot:hover{ background: #f1f5f9; color: var(--primary); transform: scale(1.05); }
-    nav .dot.active{ background: #eff6ff; color: var(--primary); }
+    nav .dot:hover{ background: var(--bg); color: var(--primary); }
+    nav .dot.active{ background: var(--primary-light); color: var(--primary); }
 
-    /* --- Main Grid Modified for 3 Columns --- */
+    /* --- Main Grid --- */
     .main{padding: 24px; max-width: 1800px; margin: 0 auto; width: 100%;}
     .grid-3{
       display:grid; 
-      /* Create 3 equal columns */
       grid-template-columns: repeat(3, 1fr); 
-      gap:var(--grid-gap);
-      align-items: start; /* Align cards to top */
+      gap: 24px;
+      align-items: start;
     }
     
     /* --- Cards --- */
@@ -85,112 +91,99 @@
       border: 1px solid var(--border);
       overflow:hidden;
       display: flex; flex-direction: column;
-      height: 100%; /* Fill column height */
+      height: 100%;
     }
     .card header{
       position:unset; height: auto; border: none;
       background: transparent; padding: 16px 20px; 
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--bg);
     }
     .card .title{font-weight:600; font-size:15px; color: var(--ink);}
     .card .body{padding:20px; height: 100%;}
     .card .body.padless{padding:0}
 
     /* --- Viz --- */
-    #viz3d{width:100%; height:500px; background:#111827; display:block;}
+    #viz3d{width:100%; height:500px; background:#0f172a; display:block;}
 
-    /* --- Quick Actions Styles (Reused) --- */
+    /* --- Actions (Reused) --- */
     .qa-container { display: flex; flex-direction: column; gap: 24px; }
     .motion-control { display: flex; flex-direction: column; gap: 16px; }
-    .tabs { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+    .tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; }
     .tab-btn {
       flex: 1; border: none; background: transparent;
-      padding: 8px; border-radius: 8px;
+      padding: 10px; border-radius: 8px;
       font-size: 13px; font-weight: 600; color: var(--muted);
       cursor: pointer; transition: all 0.2s;
     }
-    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow); }
     .panel-content { display: none; animation: fadeIn 0.2s ease; }
     .panel-content.active { display: block; }
     @keyframes fadeIn { from {opacity:0; transform:translateY(4px);} to {opacity:1; transform:translateY(0);} }
+    
     .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
     .input-grid.joints { grid-template-columns: repeat(5, 1fr); } 
-    .field-group { position: relative; }
-    .field-group label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+    .field-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
     .field-group input {
       width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
       font-size: 14px; font-weight: 500; color: var(--ink); outline: none; transition: all 0.2s; background: #fff;
     }
-    .field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-    .field-group .unit { position: absolute; right: 12px; top: 29px; font-size: 11px; color: #94a3b8; pointer-events: none; }
+    .field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    
     .btn-action {
-      width: 100%; border: none; padding: 12px; border-radius: 10px; cursor: pointer;
+      width: 100%; border: none; padding: 14px; border-radius: 10px; cursor: pointer;
       font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
-      transition: transform 0.1s, opacity 0.2s;
     }
-    .btn-action:active { transform: scale(0.98); }
-    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 6px -2px rgba(59,130,246,0.3); }
+    .btn-primary { background: var(--primary); color: #fff; }
     .btn-primary:hover { background: var(--primary-dark); }
-    .btn-confirm { background: var(--ok); color: #fff; box-shadow: 0 4px 6px -2px rgba(34, 197, 94, 0.3); }
-    .btn-confirm:hover { background: #16a34a; }
+    .btn-confirm { background: var(--ok); color: #fff; }
+    .btn-confirm:hover { background: #059669; }
     
     .system-ops { display: flex; flex-direction: column; gap: 20px; border-top: 1px solid var(--border); padding-top: 24px; }
-    .sys-section h4 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.05em; }
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sys-section h4 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
+    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .btn-sec {
       background: #fff; border: 1px solid var(--border); color: var(--ink);
-      padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 500;
+      padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
     }
-    .btn-sec:hover { border-color: #cbd5e1; background: #f8fafc; }
-    .btn-danger { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
-    .btn-danger:hover { background: #fee2e2; border-color: #fca5a5; }
-    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 12px; border-radius: 10px; }
+    .btn-danger { background: #fff1f2; border-color: #fecaca; color: #dc2626; }
+    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 16px; border-radius: 10px; }
+    
     .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
     .pill {
-      display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600;
-      padding: 4px 10px; border-radius: 99px; background: #f1f5f9; color: var(--muted); border: 1px solid transparent;
+      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+      padding: 6px 12px; border-radius: 99px; background: var(--bg); color: var(--muted);
     }
-    .pill.active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-    .dot-ind { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .pill.active { background: #dcfce7; color: #166534; }
+    .dot-ind { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
 
-    /* --- NEW SLIDER PANEL STYLES --- */
+    /* --- SLIDER PANEL --- */
     .slider-container {
       display: flex; flex-direction: column; gap: 24px;
       background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border);
     }
-    .slider-group { display: flex; flex-direction: column; gap: 8px; position: relative;}
+    .slider-group { display: flex; flex-direction: column; gap: 10px; position: relative;}
     .slider-header { display: flex; justify-content: space-between; align-items: center; }
-    .slider-header label { font-size: 13px; font-weight: 700; color: var(--ink); }
+    .slider-header label { font-size: 13px; font-weight: 600; color: var(--ink); }
     .slider-val-input {
       width: 80px; padding: 6px 10px; border: 1px solid var(--border);
       border-radius: 6px; font-size: 13px; font-weight: 600; text-align: right;
       color: var(--primary); background: #fff; transition: all 0.2s;
     }
-    /* Visual cue when value is modified manually */
-    .slider-val-input.modified {
-        border-color: var(--primary); background-color: #eff6ff; color: var(--primary-dark);
-    }
+    .slider-val-input.modified { border-color: var(--primary); background-color: var(--primary-light); }
     
-    /* Custom Range Input Styling */
     input[type=range] {
       -webkit-appearance: none; width: 100%; height: 6px;
       background: #e2e8f0; border-radius: 5px; outline: none;
     }
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 18px; height: 18px;
+      -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
       background: #fff; border: 2px solid var(--muted); border-radius: 50%;
-      cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.1s, border-color 0.2s;
+      cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
     }
-    input[type=range].modified::-webkit-slider-thumb {
-        border-color: var(--primary); background: var(--primary);
-    }
-    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+    input[type=range].modified::-webkit-slider-thumb { border-color: var(--primary); background: var(--primary); }
     
-    .live-indicator {
-        display: flex; justify-content: space-between; align-items: center;
-        margin-bottom: 16px;
-    }
+    .live-indicator { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
     .live-badge {
         display: inline-flex; align-items: center; gap:6px; 
         font-size: 12px; color: var(--muted); font-weight: 600;
@@ -199,35 +192,56 @@
     .live-badge.syncing { color: var(--ok); background: #dcfce7; }
     .live-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; }
     .live-badge.syncing .live-dot { animation: pulse 1.5s infinite; }
-    
     @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
 
-    /* Responsive */
+    /* --- RESPONSIVE --- */
     @media (max-width: 1400px) {
       .grid-3 { grid-template-columns: 1fr 1fr; }
-      /* Move sliders to bottom on medium screens */
       .col-sliders { grid-column: span 2; } 
     }
-    @media (max-width: 900px) {
-      .grid-3 { display: flex; flex-direction: column; }
-      .col-sliders { grid-column: auto; }
-      .shell { grid-template-columns: 1fr; }
-      nav { display: none; }
+    
+    @media (max-width: 1024px) {
+        .col-sliders { grid-column: auto; }
+        .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .shell { display: block; } /* Remove grid shell */
+      .menu-toggle { display: block; }
+      .brand { display: none; }
+      
+      nav {
+        position: fixed; top: var(--header-h); left: 0;
+        width: 100%; height: auto;
+        background: var(--panel);
+        flex-direction: row; justify-content: space-evenly;
+        padding: 16px; border-bottom: 1px solid var(--border);
+        transform: translateY(-150%); transition: transform 0.3s ease;
+        z-index: 1000; /* FIXED: High Z-Index */
+      }
+      nav.open { transform: translateY(0); box-shadow: var(--shadow-lg); }
+
+      .main { padding: 16px; }
+      /* Added align-items: stretch to ensure columns take full width on phone */
+      .grid-3 { display: flex; flex-direction: column; gap: 24px; align-items: stretch; }
+      
+      .input-grid.joints { grid-template-columns: repeat(3, 1fr); }
+      #viz3d { height: 350px; }
     }
   </style>
 </head>
 <body>
   <header>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <h1>Control Center</h1>
-    <div class="brand">Robot Monitoring System</div>
+    <div class="brand">Robot Monitoring UNPAD</div>
   </header>
   
   <div class="shell">
-    <nav>
+    <nav id="navbar">
       <a href="index.html" class="dot" title="Home">🏠</a>
       <a href="control.html" class="dot active" title="Control">🤖</a> 
       <a href="analytics.html" class="dot" title="Analytics">📈</a>
-      <div class="dot" title="Settings">⚙️</div>
     </nav>
 
     <main class="main">
@@ -236,13 +250,13 @@
         
         <!-- COLUMN 1: 3D VISUALIZATION -->
         <div class="col-viz">
-          <section class="card" style="height: 600px;"> <!-- Fixed height for alignment -->
-            <header><div class="title">3D Real-time View</div></header>
-            <div class="body padless" style="height: 100%;"><div id="viz3d" style="height: 100%;"></div></div>
+          <section class="card">
+            <header><div class="title">3D Visualization</div></header>
+            <div class="body padless"><div id="viz3d"></div></div>
           </section>
         </div>
 
-        <!-- COLUMN 2: QUICK ACTIONS (Reused from index.html) -->
+        <!-- COLUMN 2: QUICK ACTIONS -->
         <div class="col-actions">
           <section class="card">
             <header><div class="title">Quick Actions & System</div></header>
@@ -258,20 +272,20 @@
 
                   <div id="panel-xyz" class="panel-content active">
                     <div class="input-grid">
-                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"><span class="unit">cm</span></div>
-                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"><span class="unit">cm</span></div>
-                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"><span class="unit">cm</span></div>
+                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"></div>
+                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"></div>
+                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-xyz">Move to Coordinates ➜</button>
                   </div>
 
                   <div id="panel-joints" class="panel-content">
                     <div class="input-grid joints">
-                      <div class="field-group"><label>J1</label><input type="number" id="j1" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J2</label><input type="number" id="j2" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J3</label><input type="number" id="j3" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J4</label><input type="number" id="j4" placeholder="0"><span class="unit">°</span></div>
-                      <div class="field-group"><label>J5</label><input type="number" id="j5" placeholder="0"><span class="unit">°</span></div>
+                      <div class="field-group"><label>J1</label><input type="number" id="j1" placeholder="0"></div>
+                      <div class="field-group"><label>J2</label><input type="number" id="j2" placeholder="0"></div>
+                      <div class="field-group"><label>J3</label><input type="number" id="j3" placeholder="0"></div>
+                      <div class="field-group"><label>J4</label><input type="number" id="j4" placeholder="0"></div>
+                      <div class="field-group"><label>J5</label><input type="number" id="j5" placeholder="0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-joints">Set Joint Angles ➜</button>
                     <p style="font-size: 11px; color: var(--muted); margin-top: 8px;">* Sets a static target point.</p>
@@ -291,8 +305,8 @@
                   <div class="sys-section">
                     <h4>Operations</h4>
                     <div class="btn-grid">
-                      <button class="btn-sec" id="btn-initial">🏠 Home</button>
-                      <button class="btn-sec" id="btn-safety-reset">🛡️ Reset Safety</button>
+                      <button class="btn-sec" id="btn-initial">Home Position</button>
+                      <button class="btn-sec" id="btn-safety-reset">Reset Safety</button>
                     </div>
                   </div>
                   
@@ -306,7 +320,7 @@
 
                   <div class="status-bar">
                     <div class="pill" id="pill-ws"><span class="dot-ind"></span> Gateway</div>
-                    <div class="pill" id="pill-ros"><span class="dot-ind"></span> ROS Bridge</div>
+                    <div class="pill" id="pill-ros"><span class="dot-ind"></span> Bridge</div>
                   </div>
                 </div>
               </div>
@@ -314,10 +328,10 @@
           </section>
         </div>
 
-        <!-- COLUMN 3: NEW SLIDERS -->
+        <!-- COLUMN 3: SLIDERS -->
         <div class="col-sliders">
             <section class="card">
-                <header><div class="title">Jog Control (Manual)</div></header>
+                <header><div class="title">Slider Control (Manual)</div></header>
                 <div class="body">
                     <div class="live-indicator">
                         <div class="live-badge syncing" id="sync-badge"><div class="live-dot"></div> Live Sync</div>
@@ -385,36 +399,29 @@
     </main>
   </div>
 
-  <!-- Vendor Libs (Same as index.html) -->
+  <!-- Vendor Libs -->
   <script src="https://cdn.jsdelivr.net/npm/eventemitter2@6.4.5/lib/eventemitter2.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ros3d@1/build/ros3d.min.js"></script>
 
   <script>
-    // ==========================================
-    //  PERSISTENT LOGGING (SESSION STORAGE)
-    // ==========================================
+    // --- UI Logic ---
+    function toggleMenu() {
+        document.getElementById('navbar').classList.toggle('open');
+    }
+    
+    // --- ROBOT LOGIC (UNCHANGED) ---
     function log(line, cls) {
-        // 1. Save to SessionStorage
         const entry = { timestamp: Date.now(), line: line, cls: cls };
         let history = [];
-        try {
-            history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]');
-        } catch(e) {}
-        
+        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
         history.push(entry);
-        if (history.length > 200) history.shift(); // Keep last 200
+        if (history.length > 200) history.shift(); 
         sessionStorage.setItem('robot_logs', JSON.stringify(history));
-
-        // Note: We don't have a log view in this page, but we save it so 
-        // analytics.html or index.html can see it.
         console.log(`[LOG] ${line}`);
     }
 
-    // ==========================================
-    //  CORE SETUP
-    // ==========================================
     function switchTab(mode) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       if(mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
@@ -443,12 +450,8 @@
 
     const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2,8));
 
-    // ==========================================
-    //  WEBSOCKET CONNECTION (Node-RED Gateway)
-    // ==========================================
     let ws = null, wsTimer = null;
     
-    // Joint Sync State
     const dirtyFlags = [false, false, false, false, false]; 
     const joints = [1, 2, 3, 4, 5];
 
@@ -463,12 +466,10 @@
         try{ msg = JSON.parse(ev.data); }catch{ }
         if(!msg) return;
 
-        // --- TELEMETRY HANDLING ---
         if((msg.type === 'telemetry' || msg.schema === 'manip2.v1') && msg.data && msg.data.joints) {
             updateSlidersFromTelemetry(msg.data.joints);
         }
         
-        // Log Critical Events
         if(msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text}`, 'crit');
         if(msg.type === 'cmd_result') {
             const isErr = msg.status !== 'ok';
@@ -484,7 +485,6 @@
     }
 
     function updateSlidersFromTelemetry(jointData) {
-        // Check if we are totally dirty (all sliders modified), if so, update badge
         const anyDirty = dirtyFlags.some(f => f);
         const badge = document.getElementById('sync-badge');
         if(anyDirty) {
@@ -514,9 +514,6 @@
         });
     }
 
-    // ==========================================
-    //  ROS / 3D VIZ CONNECTION
-    // ==========================================
     let ros = null, viewer = null, tfClient = null, urdfClient = null;
     function rosConnect(){
       if(ros && ros.isConnected) return;
@@ -530,23 +527,18 @@
       const el = document.getElementById('viz3d');
       if(viewer) { el.innerHTML = ''; viewer = null; } 
       
-      viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#111827', intensity: 1.5 });
+      viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#0f172a', intensity: 1.5 });
       window.addEventListener('resize', ()=>{ if(viewer && el.clientWidth > 0) viewer.resize(el.clientWidth, el.clientHeight); });
-      viewer.addObject(new ROS3D.Grid({ color: '#374151', num_cells: 20, cell_size: 10 }));
+      viewer.addObject(new ROS3D.Grid({ color: '#334155', num_cells: 20, cell_size: 10 }));
       
       if(!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 20 });
       if(!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
     }
 
-    // ==========================================
-    //  QUICK ACTIONS HANDLERS
-    // ==========================================
     document.getElementById('btn-connect').onclick    = ()=>{ wsConnect(); rosConnect(); };
     document.getElementById('btn-disconnect').onclick = ()=>{ try{ws.close();}catch{} try{ros.close();}catch{} };
     document.getElementById('btn-initial').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'go_initial' });
     document.getElementById('btn-safety-reset').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safety_reset' });
-
-    // Danger Zone
     document.getElementById('btn-safe-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safe_shutdown' });
     document.getElementById('btn-force-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'force_shutdown' });
 
@@ -565,11 +557,6 @@
       wsSend({ type:'command', command_id:newCid(), cmd:'set_target_xyz', target:{x,y,z}, units:'cm' });
     };
 
-
-    // ==========================================
-    //  SLIDER LOGIC (Manual + Sync)
-    // ==========================================
-    
     function markDirty(idx) {
         dirtyFlags[idx] = true;
         document.getElementById(`range-j${joints[idx]}`).classList.add('modified');
@@ -610,7 +597,6 @@
         });
     });
 
-    // SUBMIT BUTTON
     document.getElementById('btn-submit-sliders').onclick = () => {
         const currentJointsDeg = joints.map(id => {
             return parseFloat(document.getElementById(`val-j${id}`).value) || 0;
@@ -625,9 +611,6 @@
         log('<b>Control:</b> Manual Jog Command Sent', 'info');
     };
 
-    // ==========================================
-    //  INIT
-    // ==========================================
     fetch('config.json')
       .then(r => r.json())
       .then(data => { if(data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
