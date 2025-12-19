@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -8,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
-    :root{
+    :root {
       /* Core Palette */
       --bg: #f8fafc;
       --panel: #ffffff;
@@ -23,289 +24,620 @@
       --warn: #f59e0b;
       --crit: #ef4444;
       --border: #e2e8f0;
-      
+
       /* UI Vars */
       --header-h: 64px;
       --radius: 12px;
       --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
       --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
-    
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; 
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
       font-family: 'Inter', sans-serif;
-      color: var(--ink); 
+      color: var(--ink);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden; /* Prevent horizontal scroll */
+      overflow-x: hidden;
+      /* Prevent horizontal scroll */
     }
 
     /* --- Header --- */
-    header{
-      display:flex; align-items:center; gap:16px; padding:0 20px; 
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
       height: var(--header-h);
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      position:sticky; top:0; z-index:50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
-    
-    header h1{
-      font-size:18px; font-weight:700; margin:0; 
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
       background: linear-gradient(135deg, var(--ink) 0%, #475569 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    header .brand{margin-left:auto; font-size: 13px; font-weight:500; color: var(--muted); display: flex; align-items: center; gap: 6px;}
+
+    header .brand {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
     /* Menu Button (Sandwich) */
     .menu-toggle {
-        display: none; /* Hidden on desktop */
-        background: none; border: none; font-size: 24px; cursor: pointer; color: var(--ink); padding: 4px;
+      display: none;
+      /* Hidden on desktop */
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--ink);
+      padding: 4px;
     }
 
     /* --- Layout Shell --- */
-    .shell{
-        display: flex;
-        min-height: calc(100vh - var(--header-h));
+    .shell {
+      display: flex;
+      min-height: calc(100vh - var(--header-h));
     }
-    
+
     /* --- Nav (Sidebar) --- */
     nav {
       width: 72px;
-      background: var(--panel); 
+      background: var(--panel);
       border-right: 1px solid var(--border);
-      padding: 24px 0; 
-      display:flex; flex-direction:column; align-items:center; gap:16px;
-      position: sticky; top: var(--header-h); height: calc(100vh - var(--header-h));
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
       z-index: 40;
       transition: transform 0.3s ease;
     }
-    
+
     nav .dot {
-      width: 48px; height: 48px; border-radius: 12px; 
-      display: grid; place-items: center; 
-      color: var(--muted); font-size: 22px; 
-      cursor: pointer; text-decoration: none; 
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      text-decoration: none;
       transition: all .2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    nav .dot:hover { background: var(--bg); color: var(--primary); }
-    nav .dot.active { background: var(--primary-light); color: var(--primary); box-shadow: inset 0 0 0 1px rgba(37,99,235,0.1); }
+
+    nav .dot:hover {
+      background: var(--bg);
+      color: var(--primary);
+    }
+
+    nav .dot.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.1);
+    }
 
     /* --- Main Content --- */
     .main {
-        flex: 1;
-        padding: 24px;
-        width: 100%;
-        max-width: 1600px;
-        margin: 0 auto;
+      flex: 1;
+      padding: 24px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
     }
 
     .grid {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 24px;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
     }
-    
+
     /* Responsive Spans */
-    .col-left { grid-column: span 7; display:flex; flex-direction:column; gap: 24px; }
-    .col-right { grid-column: span 5; display:flex; flex-direction:column; gap: 24px; }
+    .col-left {
+      grid-column: span 7;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .col-right {
+      grid-column: span 5;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
 
     /* --- Cards --- */
     .card {
-      background: var(--panel); 
-      border-radius: var(--radius); 
-      box-shadow: var(--shadow); 
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       border: 1px solid var(--border);
       overflow: hidden;
-      display: flex; flex-direction: column;
+      display: flex;
+      flex-direction: column;
       transition: box-shadow 0.2s;
     }
-    .card:hover { box-shadow: var(--shadow-lg); }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+    }
 
     .card header {
-      height: auto; border-bottom: 1px solid var(--bg);
-      background: transparent; padding: 16px 20px; 
+      height: auto;
+      border-bottom: 1px solid var(--bg);
+      background: transparent;
+      padding: 16px 20px;
     }
+
     .card .title {
-        font-weight: 600; font-size: 15px; color: var(--ink); 
-        display: flex; align-items: center; gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+
     /* Title Icon styling (optional visual flair) */
     .card .title::before {
-        content: ''; display: inline-block; width: 4px; height: 16px; 
-        background: var(--primary); border-radius: 2px;
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 16px;
+      background: var(--primary);
+      border-radius: 2px;
     }
 
-    .card .body { padding: 20px; }
-    .card .body.padless { padding: 0; }
+    .card .body {
+      padding: 20px;
+    }
+
+    .card .body.padless {
+      padding: 0;
+    }
 
     /* --- Visualizations --- */
-    #viz3d { width: 100%; height: 400px; background: #0f172a; display: block; }
+    #viz3d {
+      width: 100%;
+      height: 400px;
+      background: #0f172a;
+      display: block;
+    }
+
     #camera {
-      width: 100%; height: 280px; 
-      background: #f1f5f9; 
+      width: 100%;
+      height: 280px;
+      background: #f1f5f9;
       background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
       background-size: 20px 20px;
-      display: grid; place-items: center; 
-      color: var(--muted); font-weight: 500; font-size: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 14px;
     }
 
     /* --- Table --- */
-    .table-container { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-    th, td { padding: 14px 16px; border-bottom: 1px solid var(--bg); text-align: left; font-size: 14px; }
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      white-space: nowrap;
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--bg);
+      text-align: left;
+      font-size: 14px;
+    }
+
     thead th {
-      background: var(--bg); font-size: 12px; 
-      text-transform: uppercase; letter-spacing: 0.05em; 
-      font-weight: 600; color: var(--muted);
+      background: var(--bg);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      color: var(--muted);
     }
-    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
     .status {
-        font-weight: 600; border-radius: 6px; padding: 4px 8px; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .s-ok { color: #065f46; background: #d1fae5; }
-    .s-warn { color: #92400e; background: #fef3c7; }
-    .s-crit { color: #991b1b; background: #fee2e2; }
+
+    .s-ok {
+      color: #065f46;
+      background: #d1fae5;
+    }
+
+    .s-warn {
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    .s-crit {
+      color: #991b1b;
+      background: #fee2e2;
+    }
 
     /* --- Action Panels --- */
-    .qa-container { display: flex; flex-direction: column; gap: 24px; }
-    .motion-control { display: flex; flex-direction: column; gap: 16px; }
+    .qa-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .motion-control {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
     /* Tabs */
-    .tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; }
-    .tab-btn {
-      flex: 1; border: none; background: transparent;
-      padding: 10px; border-radius: 8px;
-      font-size: 13px; font-weight: 600; color: var(--muted);
-      cursor: pointer; transition: all 0.2s;
+    .tabs {
+      display: flex;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
     }
-    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow); }
 
-    .panel-content { display: none; animation: fadeIn 0.2s ease; }
-    .panel-content.active { display: block; }
-    @keyframes fadeIn { from {opacity:0; transform:translateY(4px);} to {opacity:1; transform:translateY(0);} }
+    .tab-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-content {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .panel-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* Inputs */
-    .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-    .field-group label {
-      display: block; font-size: 11px; font-weight: 700; 
-      color: var(--muted); margin-bottom: 6px; text-transform: uppercase;
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
     }
+
+    .field-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
     .field-group input {
-      width: 100%; padding: 12px;
-      border: 1px solid var(--border); border-radius: 8px;
-      font-size: 15px; font-weight: 500; color: var(--ink);
-      outline: none; transition: border 0.2s, box-shadow 0.2s;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink);
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s;
       background: #fff;
     }
-    .field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+    .field-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
 
     /* Buttons */
     .btn-action {
-      width: 100%; border: none; padding: 14px;
-      border-radius: 10px; cursor: pointer;
-      font-size: 14px; font-weight: 600;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transition: transform 0.1s, opacity 0.2s;
-      touch-action: manipulation; /* Improves touch response */
+      touch-action: manipulation;
+      /* Improves touch response */
     }
-    .btn-action:active { transform: scale(0.97); }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-action:active {
+      transform: scale(0.97);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .btn-sec {
-      background: #fff; border: 1px solid var(--border); color: var(--ink);
-      padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-sec:hover { background: var(--bg); border-color: #cbd5e1; }
-    .btn-danger { background: #fff1f2; border-color: #fecaca; color: #dc2626; }
-    .btn-danger:hover { background: #fee2e2; border-color: #fca5a5; }
+
+    .btn-sec:hover {
+      background: var(--bg);
+      border-color: #cbd5e1;
+    }
+
+    .btn-danger {
+      background: #fff1f2;
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+
+    .btn-danger:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+    }
 
     /* System Ops */
-    .system-ops { display: flex; flex-direction: column; gap: 20px; border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; }
-    .sys-section h4 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
-    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 16px; border-radius: 12px; }
+    .system-ops {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: 8px;
+    }
 
-    .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+    .sys-section h4 {
+      margin: 0 0 10px 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .danger-zone {
+      background: #fff1f2;
+      border: 1px dashed #fecaca;
+      padding: 16px;
+      border-radius: 12px;
+    }
+
+    .status-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+
     .pill {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 600;
-      padding: 6px 12px; border-radius: 99px;
-      background: var(--bg); color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: var(--bg);
+      color: var(--muted);
       border: 1px solid transparent;
     }
-    .pill.active { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-    .dot-ind { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .pill.active {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .dot-ind {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
     /* Log */
     #log {
-      font-family: 'JetBrains Mono', monospace; 
-      font-size: 12px; line-height: 1.5;
-      background: #0f172a; color: #94a3b8; 
-      height: 150px; overflow-y: auto; 
-      padding: 12px; border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      background: #0f172a;
+      color: #94a3b8;
+      height: 150px;
+      overflow-y: auto;
+      padding: 12px;
+      border-radius: 8px;
     }
 
     /* --- MOBILE RESPONSIVE MEDIA QUERIES --- */
     @media (max-width: 1024px) {
-        .grid { grid-template-columns: 1fr; }
-        .col-left, .col-right { grid-column: auto; }
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .col-left,
+      .col-right {
+        grid-column: auto;
+      }
     }
 
     @media (max-width: 768px) {
-        /* Header */
-        header { justify-content: space-between; padding: 0 16px; }
-        .menu-toggle { display: block; }
-        .brand { display: none; } 
-        
-        /* Navigation (Drawer) */
-        nav {
-            position: fixed; top: var(--header-h); left: 0;
-            width: 100%; height: calc(100vh - var(--header-h));
-            background: var(--panel);
-            flex-direction: row; justify-content: space-around; align-items: flex-start;
-            padding: 24px;
-            transform: translateY(-100%); /* Hidden by default (slide up) */
-            opacity: 0; pointer-events: none;
-            border-bottom: 1px solid var(--border);
-            transition: all 0.3s ease;
-            z-index: 1000; /* FIXED: High z-index to overlay everything */
-        }
-        nav.open {
-            transform: translateY(0);
-            opacity: 1; pointer-events: auto;
-        }
-        nav .dot {
-            width: 60px; height: 60px; font-size: 28px;
-            background: var(--bg);
-        }
 
-        /* Content */
-        .main { padding: 16px; }
-        .grid { gap: 16px; display: flex; flex-direction: column; } /* FIXED: Ensure column layout */
-        
-        /* Cards */
-        .card { border-radius: 12px; }
-        #viz3d { height: 300px; }
-        
-        /* Inputs */
-        .input-grid { gap: 16px; }
+      /* Header */
+      header {
+        justify-content: space-between;
+        padding: 0 16px;
+      }
+
+      .menu-toggle {
+        display: block;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      /* Navigation (Drawer) */
+      nav {
+        position: fixed;
+        top: var(--header-h);
+        left: 0;
+        width: 100%;
+        height: calc(100vh - var(--header-h));
+        background: var(--panel);
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: flex-start;
+        padding: 24px;
+        transform: translateY(-100%);
+        /* Hidden by default (slide up) */
+        opacity: 0;
+        pointer-events: none;
+        border-bottom: 1px solid var(--border);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        /* FIXED: High z-index to overlay everything */
+      }
+
+      nav.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      nav .dot {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+        background: var(--bg);
+      }
+
+      /* Content */
+      .main {
+        padding: 16px;
+      }
+
+      .grid {
+        gap: 16px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* FIXED: Ensure column layout */
+
+      /* Cards */
+      .card {
+        border-radius: 12px;
+      }
+
+      #viz3d {
+        height: 300px;
+      }
+
+      /* Inputs */
+      .input-grid {
+        gap: 16px;
+      }
     }
   </style>
 </head>
+
 <body>
   <header>
     <!-- Hamburger Menu Button -->
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <h1>Dashboard</h1>
-    <div class="brand">Robot Monitoring UNPAD <span style="font-size:10px; padding:2px 6px; background:var(--primary-light); color:var(--primary); border-radius:4px;">v2.0</span></div>
+    <div class="brand">Robot Monitoring UNPAD <span
+        style="font-size:10px; padding:2px 6px; background:var(--primary-light); color:var(--primary); border-radius:4px;">v2.0</span>
+    </div>
   </header>
-  
+
   <div class="shell">
     <nav id="navbar">
       <a href="index.html" class="dot active" title="Home">🏠</a>
@@ -315,37 +647,70 @@
 
     <main class="main">
       <div class="grid">
-        
+
         <!-- LEFT COLUMN -->
         <div class="col-left">
           <section class="card">
-            <header><div class="title">3D Visualization</div></header>
-            <div class="body padless"><div id="viz3d"></div></div>
+            <header>
+              <div class="title">3D Visualization</div>
+            </header>
+            <div class="body padless">
+              <div id="viz3d"></div>
+            </div>
           </section>
 
           <section class="card">
-            <header><div class="title">Joint Telemetry</div></header>
+            <header>
+              <div class="title">Joint Telemetry</div>
+            </header>
             <div class="body padless">
               <div class="table-container">
                 <table>
-                    <thead>
+                  <thead>
                     <tr>
-                        <th>Joint</th>
-                        <th>Angle</th>
-                        <th>Temp</th>
-                        <th>Load</th>
-                        <th>Volt</th>
-                        <th>Status</th>
+                      <th>Joint</th>
+                      <th>Angle</th>
+                      <th>Temp</th>
+                      <th>Load</th>
+                      <th>Volt</th>
+                      <th>Status</th>
                     </tr>
-                    </thead>
-                    <tbody id="servo-tbody">
+                  </thead>
+                  <tbody id="servo-tbody">
                     <!-- rows injected via JS -->
-                    </tbody>
+                  </tbody>
                 </table>
               </div>
             </div>
+
+            <div style="padding: 16px 20px; border-top: 1px solid var(--border);">
+              <div
+                style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:12px;">
+                End Effector State</div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">POSITION (m)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    X: <span id="ee-x">—</span>&nbsp;
+                    Y: <span id="ee-y">—</span>&nbsp;
+                    Z: <span id="ee-z">—</span>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">ORIENTATION (deg)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    R: <span id="ee-roll">—</span>&nbsp;
+                    P: <span id="ee-pitch">—</span>&nbsp;
+                    Y: <span id="ee-yaw">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div style="padding: 16px; border-top:1px solid var(--border)">
-                <div id="log" aria-live="polite"></div>
+              <div id="log" aria-live="polite"></div>
             </div>
           </section>
         </div>
@@ -353,10 +718,12 @@
         <!-- RIGHT COLUMN -->
         <div class="col-right">
           <section class="card">
-            <header><div class="title">Quick Actions</div></header>
+            <header>
+              <div class="title">Quick Actions</div>
+            </header>
             <div class="body">
               <div class="qa-container">
-                
+
                 <!-- 1. Motion Control Panel -->
                 <div class="motion-control">
                   <div class="tabs">
@@ -366,9 +733,12 @@
 
                   <div id="panel-xyz" class="panel-content active">
                     <div class="input-grid">
-                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"></div>
-                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"></div>
-                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"></div>
+                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x"
+                          placeholder="0.0"></div>
+                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y"
+                          placeholder="0.0"></div>
+                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z"
+                          placeholder="0.0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-xyz">Move to Coordinates ➜</button>
                   </div>
@@ -393,7 +763,8 @@
                       <button class="btn-sec" id="btn-connect">Connect</button>
                       <button class="btn-sec" id="btn-disconnect">Disconnect</button>
                     </div>
-                    <button class="btn-sec" id="btn-reconnect-port" style="width:100%; margin-top:12px; color:var(--muted)">↻ Reconnect Serial Port</button>
+                    <button class="btn-sec" id="btn-reconnect-port"
+                      style="width:100%; margin-top:12px; color:var(--muted)">↻ Reconnect Serial Port</button>
                   </div>
 
                   <div class="sys-section">
@@ -424,8 +795,12 @@
           </section>
 
           <section class="card">
-            <header><div class="title">Live Camera</div></header>
-            <div class="body padless"><div id="camera">Waiting for stream...</div></div>
+            <header>
+              <div class="title">Live Camera</div>
+            </header>
+            <div class="body padless">
+              <div id="camera">Waiting for stream...</div>
+            </div>
           </section>
         </div>
 
@@ -442,15 +817,15 @@
   <script>
     // --- UI LOGIC ---
     function toggleMenu() {
-        const nav = document.getElementById('navbar');
-        nav.classList.toggle('open');
-        const btn = document.querySelector('.menu-toggle');
-        btn.textContent = nav.classList.contains('open') ? '✕' : '☰';
+      const nav = document.getElementById('navbar');
+      nav.classList.toggle('open');
+      const btn = document.querySelector('.menu-toggle');
+      btn.textContent = nav.classList.contains('open') ? '✕' : '☰';
     }
 
     function switchTab(mode) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      if(mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+      if (mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
       else document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
       document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
       document.getElementById(mode === 'xyz' ? 'panel-xyz' : 'panel-joints').classList.add('active');
@@ -468,85 +843,85 @@
 
     const $ = sel => document.querySelector(sel);
     const logEl = $('#log');
-    
+
     // ==========================================
     //  PERSISTENT LOGGING (SESSION STORAGE)
     // ==========================================
-    function log(line, cls){
-        // 1. Save to Storage
-        const entry = { timestamp: Date.now(), line: line, cls: cls };
-        let history = [];
-        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
-        
-        history.push(entry);
-        if (history.length > 200) history.shift();
-        sessionStorage.setItem('robot_logs', JSON.stringify(history));
+    function log(line, cls) {
+      // 1. Save to Storage
+      const entry = { timestamp: Date.now(), line: line, cls: cls };
+      let history = [];
+      try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch (e) { }
 
-        // 2. Render
-        const p = document.createElement('div');
-        if(cls) p.className = cls;
-        p.innerHTML = `> ${line}`;
-        logEl.appendChild(p);
-        logEl.scrollTop = logEl.scrollHeight;
+      history.push(entry);
+      if (history.length > 200) history.shift();
+      sessionStorage.setItem('robot_logs', JSON.stringify(history));
+
+      // 2. Render
+      const p = document.createElement('div');
+      if (cls) p.className = cls;
+      p.innerHTML = `> ${line}`;
+      logEl.appendChild(p);
+      logEl.scrollTop = logEl.scrollHeight;
     }
 
     function loadLogs() {
-        logEl.innerHTML = '';
-        let history = [];
-        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
-        history.forEach(entry => {
-            const p = document.createElement('div');
-            if(entry.cls) p.className = entry.cls;
-            p.innerHTML = `> ${entry.line}`;
-            logEl.appendChild(p);
-        });
-        logEl.scrollTop = logEl.scrollHeight;
+      logEl.innerHTML = '';
+      let history = [];
+      try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch (e) { }
+      history.forEach(entry => {
+        const p = document.createElement('div');
+        if (entry.cls) p.className = entry.cls;
+        p.innerHTML = `> ${entry.line}`;
+        logEl.appendChild(p);
+      });
+      logEl.scrollTop = logEl.scrollHeight;
     }
 
     // Load logs on init
     loadLogs();
 
 
-    function setDot(type, on){
+    function setDot(type, on) {
       const el = $(`#pill-${type}`);
-      if(!el) return;
-      if(on) el.classList.add('active');
+      if (!el) return;
+      if (on) el.classList.add('active');
       else el.classList.remove('active');
     }
 
-    const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2,8));
-    function fmt(v, d=0){
-      if(v===undefined || v===null || Number.isNaN(+v)) return '—';
+    const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+    function fmt(v, d = 0) {
+      if (v === undefined || v === null || Number.isNaN(+v)) return '—';
       const f = Number(v).toFixed(d);
       return (d ? f : parseFloat(f));
     }
 
     const tbody = document.getElementById('servo-tbody');
-    function ensureRow(i){
+    function ensureRow(i) {
       let tr = tbody.querySelector(`tr[data-i="${i}"]`);
-      if(tr) return tr;
+      if (tr) return tr;
       tr = document.createElement('tr');
       tr.setAttribute('data-i', i);
-      tr.innerHTML = `<td class="name" style="font-weight:600">J${i+1}</td><td class="deg">—</td><td class="temp">—</td><td class="load">—</td><td class="volt">—</td><td><span class="status s-ok">OK</span></td>`;
+      tr.innerHTML = `<td class="name" style="font-weight:600">J${i + 1}</td><td class="deg">—</td><td class="temp">—</td><td class="load">—</td><td class="volt">—</td><td><span class="status s-ok">OK</span></td>`;
       tbody.appendChild(tr);
       return tr;
     }
 
-    function updateFromTelemetry(payload){
-      if(!payload || !payload.joints) return;
+    function updateFromTelemetry(payload) {
+      if (!payload || !payload.joints) return;
       const joints = payload.joints;
-      for(let i=0; i<joints.length; i++) ensureRow(i);
+      for (let i = 0; i < joints.length; i++) ensureRow(i);
 
-      joints.forEach((j, i)=>{
+      joints.forEach((j, i) => {
         const tr = ensureRow(i);
-        tr.querySelector('.deg').textContent  = fmt(j.pos_deg,0) + '°';
-        tr.querySelector('.temp').textContent = fmt(j.temp_c,0) + '°C';
+        tr.querySelector('.deg').textContent = fmt(j.pos_deg, 0) + '°';
+        tr.querySelector('.temp').textContent = fmt(j.temp_c, 0) + '°C';
 
         // --- UPDATED LOAD LOGIC: Prioritize load_stl (Stall Load) ---
-        const load = (j.load_stl!==undefined) ? j.load_stl : (j.load_pct!==undefined) ? j.load_pct : undefined;
-        
-        tr.querySelector('.load').textContent = (load===undefined ? '—' : fmt(load,0) + '%');
-        tr.querySelector('.volt').textContent = fmt(j.volt_v,1) + 'V';
+        const load = (j.load_stl !== undefined) ? j.load_stl : (j.load_pct !== undefined) ? j.load_pct : undefined;
+
+        tr.querySelector('.load').textContent = (load === undefined ? '—' : fmt(load, 0) + '%');
+        tr.querySelector('.volt').textContent = fmt(j.volt_v, 1) + 'V';
 
         let status = 'OK', cls = 's-ok';
         if (j.err_level && j.err_level !== 0) {
@@ -560,90 +935,121 @@
     }
 
     let ws = null, wsTimer = null;
-    function wsConnect(){
-      if(ws && (ws.readyState<=1)) return;
-      try{ ws = new WebSocket(CONFIG.NODE_RED_WS_URL); }catch(e){ log(`<b>WS:</b> ${e.message}`, 'crit'); return; }
+    let beatTimer = null;
+
+    function heartbeat() {
+      setDot('robot', true);
+      if (beatTimer) clearTimeout(beatTimer);
+      beatTimer = setTimeout(() => setDot('robot', false), 2000); // 2s timeout
+    }
+
+    function wsConnect() {
+      if (ws && (ws.readyState <= 1)) return;
+      try { ws = new WebSocket(CONFIG.NODE_RED_WS_URL); } catch (e) { log(`<b>WS:</b> ${e.message}`, 'crit'); return; }
       ws.onopen = () => { setDot('ws', true); log('<b>WS:</b> connected'); ping(); };
-      ws.onclose = () => { setDot('ws', false); log('<b>WS:</b> disconnected','warn'); if(wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 1500); };
+      ws.onclose = () => { setDot('ws', false); log('<b>WS:</b> disconnected', 'warn'); if (wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 1500); };
       ws.onmessage = (ev) => {
         let msg = null;
-        try{ msg = JSON.parse(ev.data); }catch{ }
-        if(!msg) return;
+        try { msg = JSON.parse(ev.data); } catch { }
+        if (!msg) return;
 
-        if(msg.type === 'telemetry' || msg.schema === 'manip2.v1') updateFromTelemetry(msg.type==='telemetry' ? msg.data : msg);
-        if(msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text || JSON.stringify(msg)}`, 'crit');
-        
-        if(msg.type === 'eval_result') {
+        if (msg.type === 'telemetry' || msg.schema === 'manip2.v1') {
+          updateFromTelemetry(msg.type === 'telemetry' ? msg.data : msg);
+          heartbeat();
+        }
+
+        if (msg.type === 'ee_state' || (msg.type === undefined && msg.pos_m)) {
+          const d = msg.type === 'ee_state' ? msg.data : msg;
+          if (d.pos_m) {
+            if (d.pos_m.x !== undefined) document.getElementById('ee-x').textContent = fmt(d.pos_m.x, 3);
+            if (d.pos_m.y !== undefined) document.getElementById('ee-y').textContent = fmt(d.pos_m.y, 3);
+            if (d.pos_m.z !== undefined) document.getElementById('ee-z').textContent = fmt(d.pos_m.z, 3);
+          }
+          if (d.rpy_deg) {
+            if (d.rpy_deg.roll !== undefined) document.getElementById('ee-roll').textContent = fmt(d.rpy_deg.roll, 1);
+            if (d.rpy_deg.pitch !== undefined) document.getElementById('ee-pitch').textContent = fmt(d.rpy_deg.pitch, 1);
+            if (d.rpy_deg.yaw !== undefined) document.getElementById('ee-yaw').textContent = fmt(d.rpy_deg.yaw, 1);
+          }
+          heartbeat();
+        }
+
+        if (msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text || JSON.stringify(msg)}`, 'crit');
+
+        if (msg.type === 'eval_result') {
           const d = msg.data;
           const cls = d.success ? 'eval-ok' : 'eval-fail';
           const icon = d.success ? '✅' : '❌';
-          log(`${icon} <b>EVAL:</b> Dist ${fmt(d.final_dist_cm,2)}cm | Target [${fmt(d.target_x)},${fmt(d.target_y)},${fmt(d.target_z)}]`, cls);
+          log(`${icon} <b>EVAL:</b> Dist ${fmt(d.final_dist_cm, 2)}cm | Target [${fmt(d.target_x)},${fmt(d.target_y)},${fmt(d.target_z)}]`, cls);
         }
 
-        if(msg.type === 'errors'){
+        if (msg.type === 'errors') {
           const raw = msg.errors || [];
-          const bad = raw.filter(e => (e.level||0) !== 0 && (e.message||'OK').trim().toUpperCase() !== 'OK');
+          const bad = raw.filter(e => (e.level || 0) !== 0 && (e.message || 'OK').trim().toUpperCase() !== 'OK');
           if (bad.length) log(`<b>ERR:</b> ${bad.map(e => e.message).join(' | ')}`, 'warn');
+          heartbeat();
         }
 
-        if(msg.type === 'status') setDot('robot', !!msg.robot_active);
-        if(msg.type === 'cmd_result') log(`<b>CMD:</b> ${msg.status} (${msg.message||''})`, msg.status==='ok' ? undefined : 'warn');
+        if (msg.type === 'joint_state') heartbeat();
+
+
+        if (msg.type === 'cmd_result') log(`<b>CMD:</b> ${msg.status} (${msg.message || ''})`, msg.status === 'ok' ? undefined : 'warn');
       };
     }
 
-    function ping(){ if(ws && ws.readyState===1){ ws.send(JSON.stringify({type:'ping', t:Date.now()})); setTimeout(ping, 10000); } }
-    function wsSend(obj){ if(ws && ws.readyState===1) ws.send(JSON.stringify(obj)); else log('<b>WS:</b> not connected','warn'); }
+    function ping() { if (ws && ws.readyState === 1) { ws.send(JSON.stringify({ type: 'ping', t: Date.now() })); setTimeout(ping, 10000); } }
+    function wsSend(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); else log('<b>WS:</b> not connected', 'warn'); }
 
     let ros = null, viewer = null, tfClient = null, urdfClient = null;
-    function rosConnect(){
-      if(ros && ros.isConnected) return;
+    function rosConnect() {
+      if (ros && ros.isConnected) return;
       ros = new ROSLIB.Ros({ url: CONFIG.ROSBRIDGE_URL });
-      ros.on('connection', ()=>{ setDot('ros', true); log('<b>ROS:</b> connected'); initViewer(); });
-      ros.on('error', ()=>{ setDot('ros', false); log('<b>ROS:</b> error', 'crit'); });
-      ros.on('close', ()=>{ setDot('ros', false); setTimeout(rosConnect, 2000); });
+      ros.on('connection', () => { setDot('ros', true); log('<b>ROS:</b> connected'); initViewer(); });
+      ros.on('error', () => { setDot('ros', false); log('<b>ROS:</b> error', 'crit'); });
+      ros.on('close', () => { setDot('ros', false); setTimeout(rosConnect, 2000); });
     }
 
-    function initViewer(){
+    function initViewer() {
       const el = document.getElementById('viz3d');
-      if(!viewer){
+      if (!viewer) {
         viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#0f172a' });
-        window.addEventListener('resize', ()=>{ if(viewer) viewer.resize(el.clientWidth, el.clientHeight); });
+        window.addEventListener('resize', () => { if (viewer) viewer.resize(el.clientWidth, el.clientHeight); });
         viewer.addObject(new ROS3D.Grid({ color: '#334155' }));
       }
-      if(!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 15 });
-      if(!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
+      if (!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 15 });
+      if (!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
     }
 
-    document.getElementById('btn-connect').onclick    = ()=>{ wsConnect(); rosConnect(); };
-    document.getElementById('btn-disconnect').onclick = ()=>{ try{ws.close();}catch{} };
-    document.getElementById('btn-initial').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'go_initial' });
-    document.getElementById('btn-safe-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safe_shutdown' });
-    document.getElementById('btn-force-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'force_shutdown' });
-    document.getElementById('btn-reconnect-port').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'reconnect_port' });
-    document.getElementById('btn-safety-reset').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safety_reset' });
+    document.getElementById('btn-connect').onclick = () => { wsConnect(); rosConnect(); };
+    document.getElementById('btn-disconnect').onclick = () => { try { ws.close(); } catch { } };
+    document.getElementById('btn-initial').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'go_initial' });
+    document.getElementById('btn-safe-shutdown').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'safe_shutdown' });
+    document.getElementById('btn-force-shutdown').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'force_shutdown' });
+    document.getElementById('btn-reconnect-port').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'reconnect_port' });
+    document.getElementById('btn-safety-reset').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'safety_reset' });
 
-    document.getElementById('btn-send-joints').onclick = ()=>{
-      const vals = ['j1','j2','j3','j4','j5'].map(id=>parseFloat(document.getElementById(id).value));
+    document.getElementById('btn-send-joints').onclick = () => {
+      const vals = ['j1', 'j2', 'j3', 'j4', 'j5'].map(id => parseFloat(document.getElementById(id).value));
       if (vals.some(v => Number.isNaN(v))) { log('<b>UI:</b> Invalid joint inputs', 'warn'); return; }
-      wsSend({ type:'command', command_id:newCid(), cmd:'set_joint_deg', joints: vals });
+      wsSend({ type: 'command', command_id: newCid(), cmd: 'set_joint_deg', joints: vals });
     };
 
-    document.getElementById('btn-send-xyz').onclick = ()=>{
+    document.getElementById('btn-send-xyz').onclick = () => {
       const x = parseFloat(document.getElementById('in-x').value);
       const y = parseFloat(document.getElementById('in-y').value);
       const z = parseFloat(document.getElementById('in-z').value);
-      if([x,y,z].some(v=>Number.isNaN(v))){ log('<b>UI:</b> Invalid coordinates', 'warn'); return; }
-      wsSend({ type:'command', command_id:newCid(), cmd:'set_target_xyz', target:{x,y,z}, units:'cm' });
+      if ([x, y, z].some(v => Number.isNaN(v))) { log('<b>UI:</b> Invalid coordinates', 'warn'); return; }
+      wsSend({ type: 'command', command_id: newCid(), cmd: 'set_target_xyz', target: { x, y, z }, units: 'cm' });
     };
 
     fetch('config.json')
       .then(r => r.json())
-      .then(data => { if(data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
+      .then(data => { if (data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
       .catch(() => { console.log('Using default IP'); })
       .finally(() => {
-          if(CONFIG.AUTO_CONNECT){ wsConnect(); rosConnect(); }
-          log('System ready');
+        if (CONFIG.AUTO_CONNECT) { wsConnect(); rosConnect(); }
+        log('System ready');
       });
   </script>
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
@@ -7,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <style>
-    :root{
+    :root {
       /* Core Palette */
       --bg: #f8fafc;
       --panel: #ffffff;
@@ -22,247 +23,650 @@
       --warn: #f59e0b;
       --crit: #ef4444;
       --border: #e2e8f0;
-      
+
       /* UI Vars */
       --header-h: 64px;
       --radius: 12px;
       --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
       --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
     }
-    
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; 
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%
+    }
+
+    body {
+      margin: 0;
       font-family: 'Inter', sans-serif;
-      color: var(--ink); 
+      color: var(--ink);
       background: var(--bg);
       -webkit-font-smoothing: antialiased;
       overflow-x: hidden;
     }
 
     /* --- Layout --- */
-    header{
-      display:flex; align-items:center; gap:16px; padding:0 20px; 
+    header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
       height: var(--header-h);
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      position:sticky; top:0; z-index:50;
+      position: sticky;
+      top: 0;
+      z-index: 50;
     }
-    header h1{ font-size:18px; font-weight:700; margin:0; }
-    header .brand{margin-left:auto; font-size: 13px; font-weight:500; color: var(--muted);}
-    
-    .menu-toggle { display: none; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--ink); padding:4px; }
 
-    .shell{display:grid; grid-template-columns: 72px 1fr; min-height:calc(100vh - var(--header-h));}
-    
+    header h1 {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    header .brand {
+      margin-left: auto;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--ink);
+      padding: 4px;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      min-height: calc(100vh - var(--header-h));
+    }
+
     /* --- Nav --- */
-    nav{
-      background: var(--panel); border-right: 1px solid var(--border);
-      padding: 24px 0; display:flex; flex-direction:column; align-items:center; gap:16px;
-      position: sticky; top: var(--header-h); height: calc(100vh - var(--header-h));
+    nav {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: var(--header-h);
+      height: calc(100vh - var(--header-h));
       z-index: 40;
     }
-    nav .dot{
-      width:48px; height:48px; border-radius:12px; 
-      display:grid; place-items:center; 
-      color: var(--muted); font-size:22px; 
-      cursor: pointer; transition: all .2s;
+
+    nav .dot {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 22px;
+      cursor: pointer;
+      transition: all .2s;
       text-decoration: none;
     }
-    nav .dot:hover{ background: var(--bg); color: var(--primary); }
-    nav .dot.active{ background: var(--primary-light); color: var(--primary); }
+
+    nav .dot:hover {
+      background: var(--bg);
+      color: var(--primary);
+    }
+
+    nav .dot.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
 
     /* --- Main Grid --- */
-    .main{padding: 24px; max-width: 1800px; margin: 0 auto; width: 100%;}
-    .grid-3{
-      display:grid; 
-      grid-template-columns: repeat(3, 1fr); 
+    .main {
+      padding: 24px;
+      max-width: 1800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
       align-items: start;
     }
-    
+
     /* --- Cards --- */
-    .card{
-      background: var(--panel); 
-      border-radius: var(--radius); 
-      box-shadow: var(--shadow); 
+    .card {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       border: 1px solid var(--border);
-      overflow:hidden;
-      display: flex; flex-direction: column;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
       height: 100%;
     }
-    .card header{
-      position:unset; height: auto; border: none;
-      background: transparent; padding: 16px 20px; 
+
+    .card header {
+      position: unset;
+      height: auto;
+      border: none;
+      background: transparent;
+      padding: 16px 20px;
       border-bottom: 1px solid var(--bg);
     }
-    .card .title{font-weight:600; font-size:15px; color: var(--ink);}
-    .card .body{padding:20px; height: 100%;}
-    .card .body.padless{padding:0}
+
+    .card .title {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .card .body {
+      padding: 20px;
+      height: 100%;
+    }
+
+    .card .body.padless {
+      padding: 0
+    }
 
     /* --- Viz --- */
-    #viz3d{width:100%; height:500px; background:#0f172a; display:block;}
+    #viz3d {
+      width: 100%;
+      height: 500px;
+      background: #0f172a;
+      display: block;
+    }
 
     /* --- Actions (Reused) --- */
-    .qa-container { display: flex; flex-direction: column; gap: 24px; }
-    .motion-control { display: flex; flex-direction: column; gap: 16px; }
-    .tabs { display: flex; background: var(--bg); padding: 4px; border-radius: 10px; }
+    .qa-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .motion-control {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tabs {
+      display: flex;
+      background: var(--bg);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
     .tab-btn {
-      flex: 1; border: none; background: transparent;
-      padding: 10px; border-radius: 8px;
-      font-size: 13px; font-weight: 600; color: var(--muted);
-      cursor: pointer; transition: all 0.2s;
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .tab-btn.active { background: #fff; color: var(--primary); box-shadow: var(--shadow); }
-    .panel-content { display: none; animation: fadeIn 0.2s ease; }
-    .panel-content.active { display: block; }
-    @keyframes fadeIn { from {opacity:0; transform:translateY(4px);} to {opacity:1; transform:translateY(0);} }
-    
-    .input-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-    .input-grid.joints { grid-template-columns: repeat(5, 1fr); } 
-    .field-group label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; }
+
+    .tab-btn.active {
+      background: #fff;
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .panel-content {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .panel-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .input-grid.joints {
+      grid-template-columns: repeat(5, 1fr);
+    }
+
+    .field-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
     .field-group input {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
-      font-size: 14px; font-weight: 500; color: var(--ink); outline: none; transition: all 0.2s; background: #fff;
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--ink);
+      outline: none;
+      transition: all 0.2s;
+      background: #fff;
     }
-    .field-group input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
-    
+
+    .field-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
     .btn-action {
-      width: 100%; border: none; padding: 14px; border-radius: 10px; cursor: pointer;
-      font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-confirm { background: var(--ok); color: #fff; }
-    .btn-confirm:hover { background: #059669; }
-    
-    .system-ops { display: flex; flex-direction: column; gap: 20px; border-top: 1px solid var(--border); padding-top: 24px; }
-    .sys-section h4 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
-    .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-confirm {
+      background: var(--ok);
+      color: #fff;
+    }
+
+    .btn-confirm:hover {
+      background: #059669;
+    }
+
+    .system-ops {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+
+    .sys-section h4 {
+      margin: 0 0 10px 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
     .btn-sec {
-      background: #fff; border: 1px solid var(--border); color: var(--ink);
-      padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .btn-danger { background: #fff1f2; border-color: #fecaca; color: #dc2626; }
-    .danger-zone { background: #fff1f2; border: 1px dashed #fecaca; padding: 16px; border-radius: 10px; }
-    
-    .status-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+
+    .btn-danger {
+      background: #fff1f2;
+      border-color: #fecaca;
+      color: #dc2626;
+    }
+
+    .danger-zone {
+      background: #fff1f2;
+      border: 1px dashed #fecaca;
+      padding: 16px;
+      border-radius: 10px;
+    }
+
+    .status-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+
     .pill {
-      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
-      padding: 6px 12px; border-radius: 99px; background: var(--bg); color: var(--muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 99px;
+      background: var(--bg);
+      color: var(--muted);
     }
-    .pill.active { background: #dcfce7; color: #166534; }
-    .dot-ind { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .pill.active {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .dot-ind {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
 
     /* --- SLIDER PANEL --- */
     .slider-container {
-      display: flex; flex-direction: column; gap: 24px;
-      background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      background: #f8fafc;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
     }
-    .slider-group { display: flex; flex-direction: column; gap: 10px; position: relative;}
-    .slider-header { display: flex; justify-content: space-between; align-items: center; }
-    .slider-header label { font-size: 13px; font-weight: 600; color: var(--ink); }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .slider-header label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
     .slider-val-input {
-      width: 80px; padding: 6px 10px; border: 1px solid var(--border);
-      border-radius: 6px; font-size: 13px; font-weight: 600; text-align: right;
-      color: var(--primary); background: #fff; transition: all 0.2s;
+      width: 80px;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: right;
+      color: var(--primary);
+      background: #fff;
+      transition: all 0.2s;
     }
-    .slider-val-input.modified { border-color: var(--primary); background-color: var(--primary-light); }
-    
+
+    .slider-val-input.modified {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
     input[type=range] {
-      -webkit-appearance: none; width: 100%; height: 6px;
-      background: #e2e8f0; border-radius: 5px; outline: none;
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 5px;
+      outline: none;
     }
+
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none; width: 22px; height: 22px;
-      background: #fff; border: 2px solid var(--muted); border-radius: 50%;
-      cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      border: 2px solid var(--muted);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
-    input[type=range].modified::-webkit-slider-thumb { border-color: var(--primary); background: var(--primary); }
-    
-    .live-indicator { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+    input[type=range].modified::-webkit-slider-thumb {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .live-indicator {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
     .live-badge {
-        display: inline-flex; align-items: center; gap:6px; 
-        font-size: 12px; color: var(--muted); font-weight: 600;
-        background: #f1f5f9; padding: 4px 10px; border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 20px;
     }
-    .live-badge.syncing { color: var(--ok); background: #dcfce7; }
-    .live-dot { width: 8px; height: 8px; background: currentColor; border-radius: 50%; }
-    .live-badge.syncing .live-dot { animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% {opacity: 1;} 50% {opacity: 0.4;} 100% {opacity: 1;} }
+
+    .live-badge.syncing {
+      color: var(--ok);
+      background: #dcfce7;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+
+    .live-badge.syncing .live-dot {
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.4;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
 
     /* --- RESPONSIVE --- */
     @media (max-width: 1400px) {
-      .grid-3 { grid-template-columns: 1fr 1fr; }
-      .col-sliders { grid-column: span 2; } 
+      .grid-3 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .col-sliders {
+        grid-column: span 2;
+      }
     }
-    
+
     @media (max-width: 1024px) {
-        .col-sliders { grid-column: auto; }
-        .grid-3 { grid-template-columns: 1fr; }
+      .col-sliders {
+        grid-column: auto;
+      }
+
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
     }
 
     @media (max-width: 768px) {
-      .shell { display: block; } /* Remove grid shell */
-      .menu-toggle { display: block; }
-      .brand { display: none; }
-      
-      nav {
-        position: fixed; top: var(--header-h); left: 0;
-        width: 100%; height: auto;
-        background: var(--panel);
-        flex-direction: row; justify-content: space-evenly;
-        padding: 16px; border-bottom: 1px solid var(--border);
-        transform: translateY(-150%); transition: transform 0.3s ease;
-        z-index: 1000; /* FIXED: High Z-Index */
+      .shell {
+        display: block;
       }
-      nav.open { transform: translateY(0); box-shadow: var(--shadow-lg); }
 
-      .main { padding: 16px; }
+      /* Remove grid shell */
+      .menu-toggle {
+        display: block;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      nav {
+        position: fixed;
+        top: var(--header-h);
+        left: 0;
+        width: 100%;
+        height: auto;
+        background: var(--panel);
+        flex-direction: row;
+        justify-content: space-evenly;
+        padding: 16px;
+        border-bottom: 1px solid var(--border);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        /* FIXED: High Z-Index */
+      }
+
+      nav.open {
+        transform: translateY(0);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .main {
+        padding: 16px;
+      }
+
       /* Added align-items: stretch to ensure columns take full width on phone */
-      .grid-3 { display: flex; flex-direction: column; gap: 24px; align-items: stretch; }
-      
-      .input-grid.joints { grid-template-columns: repeat(3, 1fr); }
-      #viz3d { height: 350px; }
+      .grid-3 {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: stretch;
+      }
+
+      .input-grid.joints {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      #viz3d {
+        height: 350px;
+      }
     }
   </style>
 </head>
+
 <body>
   <header>
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     <h1>Control Center</h1>
     <div class="brand">Robot Monitoring UNPAD</div>
   </header>
-  
+
   <div class="shell">
     <nav id="navbar">
       <a href="index.html" class="dot" title="Home">🏠</a>
-      <a href="control.html" class="dot active" title="Control">🤖</a> 
+      <a href="control.html" class="dot active" title="Control">🤖</a>
       <a href="analytics.html" class="dot" title="Analytics">📈</a>
     </nav>
 
     <main class="main">
       <!-- 3-COLUMN GRID LAYOUT -->
       <div class="grid-3">
-        
+
         <!-- COLUMN 1: 3D VISUALIZATION -->
         <div class="col-viz">
           <section class="card">
-            <header><div class="title">3D Visualization</div></header>
-            <div class="body padless"><div id="viz3d"></div></div>
+            <header>
+              <div class="title">3D Visualization</div>
+            </header>
+            <div class="body padless">
+              <div id="viz3d"></div>
+            </div>
+
+            <div style="padding: 16px 20px; border-top: 1px solid var(--border);">
+              <div
+                style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:12px;">
+                End Effector State</div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">POSITION (m)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    X: <span id="ee-x">—</span>&nbsp;
+                    Y: <span id="ee-y">—</span>&nbsp;
+                    Z: <span id="ee-z">—</span>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">ORIENTATION (deg)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    R: <span id="ee-roll">—</span>&nbsp;
+                    P: <span id="ee-pitch">—</span>&nbsp;
+                    Y: <span id="ee-yaw">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
 
         <!-- COLUMN 2: QUICK ACTIONS -->
         <div class="col-actions">
           <section class="card">
-            <header><div class="title">Quick Actions & System</div></header>
+            <header>
+              <div class="title">Quick Actions & System</div>
+            </header>
             <div class="body">
               <div class="qa-container">
-                
+
                 <!-- Motion Control Panel -->
                 <div class="motion-control">
                   <div class="tabs">
@@ -272,9 +676,12 @@
 
                   <div id="panel-xyz" class="panel-content active">
                     <div class="input-grid">
-                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x" placeholder="0.0"></div>
-                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y" placeholder="0.0"></div>
-                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z" placeholder="0.0"></div>
+                      <div class="field-group"><label>X Axis</label><input type="number" step="0.1" id="in-x"
+                          placeholder="0.0"></div>
+                      <div class="field-group"><label>Y Axis</label><input type="number" step="0.1" id="in-y"
+                          placeholder="0.0"></div>
+                      <div class="field-group"><label>Z Axis</label><input type="number" step="0.1" id="in-z"
+                          placeholder="0.0"></div>
                     </div>
                     <button class="btn-action btn-primary" id="btn-send-xyz">Move to Coordinates ➜</button>
                   </div>
@@ -300,6 +707,8 @@
                       <button class="btn-sec" id="btn-connect">Connect</button>
                       <button class="btn-sec" id="btn-disconnect">Disconnect</button>
                     </div>
+                    <button class="btn-sec" id="btn-reconnect-port"
+                      style="width:100%; margin-top:12px; color:var(--muted)">↻ Reconnect Serial Port</button>
                   </div>
 
                   <div class="sys-section">
@@ -309,16 +718,17 @@
                       <button class="btn-sec" id="btn-safety-reset">Reset Safety</button>
                     </div>
                   </div>
-                  
+
                   <div class="sys-section danger-zone">
-                      <h4 style="color:#ef4444">Danger Zone</h4>
-                      <div class="btn-grid">
-                        <button class="btn-sec btn-danger" id="btn-safe-shutdown">Safe Halt</button>
-                        <button class="btn-sec btn-danger" id="btn-force-shutdown">Force Off</button>
-                      </div>
+                    <h4 style="color:#ef4444">Danger Zone</h4>
+                    <div class="btn-grid">
+                      <button class="btn-sec btn-danger" id="btn-safe-shutdown">Safe Halt</button>
+                      <button class="btn-sec btn-danger" id="btn-force-shutdown">Force Off</button>
+                    </div>
                   </div>
 
                   <div class="status-bar">
+                    <div class="pill" id="pill-robot"><span class="dot-ind"></span> Robot</div>
                     <div class="pill" id="pill-ws"><span class="dot-ind"></span> Gateway</div>
                     <div class="pill" id="pill-ros"><span class="dot-ind"></span> Bridge</div>
                   </div>
@@ -330,69 +740,74 @@
 
         <!-- COLUMN 3: SLIDERS -->
         <div class="col-sliders">
-            <section class="card">
-                <header><div class="title">Slider Control (Manual)</div></header>
-                <div class="body">
-                    <div class="live-indicator">
-                        <div class="live-badge syncing" id="sync-badge"><div class="live-dot"></div> Live Sync</div>
-                        <button class="btn-sec" style="padding: 4px 8px; font-size: 11px;" id="btn-resync">Reset to Live</button>
-                    </div>
-                    
-                    <div class="slider-container">
-                        <!-- Joint 1 Slider -->
-                        <div class="slider-group">
-                            <div class="slider-header">
-                                <label for="range-j1">Joint 1 (Base)</label>
-                                <input type="number" id="val-j1" class="slider-val-input" value="0" min="-90" max="90" step="0.1">
-                            </div>
-                            <input type="range" id="range-j1" min="-90" max="90" value="0" step="0.1">
-                        </div>
-
-                        <!-- Joint 2 Slider -->
-                        <div class="slider-group">
-                            <div class="slider-header">
-                                <label for="range-j2">Joint 2 (Shoulder)</label>
-                                <input type="number" id="val-j2" class="slider-val-input" value="0" min="-30" max="45" step="0.1">
-                            </div>
-                            <input type="range" id="range-j2" min="-30" max="45" value="0" step="0.1">
-                        </div>
-
-                        <!-- Joint 3 Slider -->
-                        <div class="slider-group">
-                            <div class="slider-header">
-                                <label for="range-j3">Joint 3 (Elbow)</label>
-                                <input type="number" id="val-j3" class="slider-val-input" value="-45" min="-105" max="0" step="0.1">
-                            </div>
-                            <input type="range" id="range-j3" min="-105" max="0" value="-45" step="0.1">
-                        </div>
-
-                        <!-- Joint 4 Slider -->
-                        <div class="slider-group">
-                            <div class="slider-header">
-                                <label for="range-j4">Joint 4 (Wrist Pitch)</label>
-                                <input type="number" id="val-j4" class="slider-val-input" value="0" min="-77" max="113" step="0.1">
-                            </div>
-                            <input type="range" id="range-j4" min="-77" max="113" value="0" step="0.1">
-                        </div>
-
-                        <!-- Joint 5 Slider -->
-                        <div class="slider-group">
-                            <div class="slider-header">
-                                <label for="range-j5">Joint 5 (Wrist Roll)</label>
-                                <input type="number" id="val-j5" class="slider-val-input" value="0" min="-103" max="103" step="0.1">
-                            </div>
-                            <input type="range" id="range-j5" min="-103" max="103" value="0" step="0.1">
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 20px;">
-                        <button class="btn-action btn-confirm" id="btn-submit-sliders">Submit Move ➜</button>
-                        <p style="font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center;">
-                            Sliders track robot position until moved. Click "Reset" to re-sync.
-                        </p>
-                    </div>
+          <section class="card">
+            <header>
+              <div class="title">Slider Control (Manual)</div>
+            </header>
+            <div class="body">
+              <div class="live-indicator">
+                <div class="live-badge syncing" id="sync-badge">
+                  <div class="live-dot"></div> Live Sync
                 </div>
-            </section>
+                <button class="btn-sec" style="padding: 4px 8px; font-size: 11px;" id="btn-resync">Reset to
+                  Live</button>
+              </div>
+
+              <div class="slider-container">
+                <!-- Joint 1 Slider -->
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label for="range-j1">Joint 1 (Base)</label>
+                    <input type="number" id="val-j1" class="slider-val-input" value="0" min="-90" max="90" step="0.1">
+                  </div>
+                  <input type="range" id="range-j1" min="-90" max="90" value="0" step="0.1">
+                </div>
+
+                <!-- Joint 2 Slider -->
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label for="range-j2">Joint 2 (Shoulder)</label>
+                    <input type="number" id="val-j2" class="slider-val-input" value="0" min="-30" max="45" step="0.1">
+                  </div>
+                  <input type="range" id="range-j2" min="-30" max="45" value="0" step="0.1">
+                </div>
+
+                <!-- Joint 3 Slider -->
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label for="range-j3">Joint 3 (Elbow)</label>
+                    <input type="number" id="val-j3" class="slider-val-input" value="-45" min="-105" max="0" step="0.1">
+                  </div>
+                  <input type="range" id="range-j3" min="-105" max="0" value="-45" step="0.1">
+                </div>
+
+                <!-- Joint 4 Slider -->
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label for="range-j4">Joint 4 (Wrist Pitch)</label>
+                    <input type="number" id="val-j4" class="slider-val-input" value="0" min="-77" max="113" step="0.1">
+                  </div>
+                  <input type="range" id="range-j4" min="-77" max="113" value="0" step="0.1">
+                </div>
+
+                <!-- Joint 5 Slider -->
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <label for="range-j5">Joint 5 (Wrist Roll)</label>
+                    <input type="number" id="val-j5" class="slider-val-input" value="0" min="-103" max="103" step="0.1">
+                  </div>
+                  <input type="range" id="range-j5" min="-103" max="103" value="0" step="0.1">
+                </div>
+              </div>
+
+              <div style="margin-top: 20px;">
+                <button class="btn-action btn-confirm" id="btn-submit-sliders">Submit Move ➜</button>
+                <p style="font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center;">
+                  Sliders track robot position until moved. Click "Reset" to re-sync.
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
 
       </div>
@@ -408,23 +823,23 @@
   <script>
     // --- UI Logic ---
     function toggleMenu() {
-        document.getElementById('navbar').classList.toggle('open');
+      document.getElementById('navbar').classList.toggle('open');
     }
-    
+
     // --- ROBOT LOGIC (UNCHANGED) ---
     function log(line, cls) {
-        const entry = { timestamp: Date.now(), line: line, cls: cls };
-        let history = [];
-        try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch(e) {}
-        history.push(entry);
-        if (history.length > 200) history.shift(); 
-        sessionStorage.setItem('robot_logs', JSON.stringify(history));
-        console.log(`[LOG] ${line}`);
+      const entry = { timestamp: Date.now(), line: line, cls: cls };
+      let history = [];
+      try { history = JSON.parse(sessionStorage.getItem('robot_logs') || '[]'); } catch (e) { }
+      history.push(entry);
+      if (history.length > 200) history.shift();
+      sessionStorage.setItem('robot_logs', JSON.stringify(history));
+      console.log(`[LOG] ${line}`);
     }
 
     function switchTab(mode) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      if(mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
+      if (mode === 'xyz') document.querySelector('.tab-btn:nth-child(1)').classList.add('active');
       else document.querySelector('.tab-btn:nth-child(2)').classList.add('active');
       document.querySelectorAll('.panel-content').forEach(p => p.classList.remove('active'));
       document.getElementById(mode === 'xyz' ? 'panel-xyz' : 'panel-joints').classList.add('active');
@@ -441,184 +856,221 @@
 
     const $ = sel => document.querySelector(sel);
 
-    function setDot(type, on){
+    function setDot(type, on) {
       const el = $(`#pill-${type}`);
-      if(!el) return;
-      if(on) el.classList.add('active');
+      if (!el) return;
+      if (on) el.classList.add('active');
       else el.classList.remove('active');
     }
 
-    const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2,8));
+    const newCid = () => (Date.now().toString(36) + Math.random().toString(36).slice(2, 8));
+    function fmt(v, d = 0) {
+      if (v === undefined || v === null || Number.isNaN(+v)) return '—';
+      const f = Number(v).toFixed(d);
+      return (d ? f : parseFloat(f));
+    }
 
     let ws = null, wsTimer = null;
-    
-    const dirtyFlags = [false, false, false, false, false]; 
-    const joints = [1, 2, 3, 4, 5];
 
-    function wsConnect(){
-      if(ws && (ws.readyState<=1)) return;
-      try{ ws = new WebSocket(CONFIG.NODE_RED_WS_URL); }catch(e){ console.error('WS Init Error', e); return; }
+    const dirtyFlags = [false, false, false, false, false];
+    const joints = [1, 2, 3, 4, 5];
+    let beatTimer = null;
+
+    function heartbeat() {
+      setDot('robot', true);
+      if (beatTimer) clearTimeout(beatTimer);
+      beatTimer = setTimeout(() => setDot('robot', false), 2000); // 2s timeout
+    }
+
+    function wsConnect() {
+      if (ws && (ws.readyState <= 1)) return;
+      try { ws = new WebSocket(CONFIG.NODE_RED_WS_URL); } catch (e) { console.error('WS Init Error', e); return; }
       ws.onopen = () => { setDot('ws', true); log('<b>WS:</b> Connected', 'info'); ping(); };
-      ws.onclose = () => { setDot('ws', false); log('<b>WS:</b> Disconnected', 'warn'); if(wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 1500); };
-      
+      ws.onclose = () => { setDot('ws', false); log('<b>WS:</b> Disconnected', 'warn'); if (wsTimer) clearTimeout(wsTimer); wsTimer = setTimeout(wsConnect, 1500); };
+
       ws.onmessage = (ev) => {
         let msg = null;
-        try{ msg = JSON.parse(ev.data); }catch{ }
-        if(!msg) return;
+        try { msg = JSON.parse(ev.data); } catch { }
+        if (!msg) return;
 
-        if((msg.type === 'telemetry' || msg.schema === 'manip2.v1') && msg.data && msg.data.joints) {
-            updateSlidersFromTelemetry(msg.data.joints);
+        if ((msg.type === 'telemetry' || msg.schema === 'manip2.v1') && msg.data && msg.data.joints) {
+          updateSlidersFromTelemetry(msg.data.joints);
+          heartbeat();
         }
-        
-        if(msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text}`, 'crit');
-        if(msg.type === 'cmd_result') {
-            const isErr = msg.status !== 'ok';
-            log(`<b>CMD:</b> ${msg.status.toUpperCase()} - ${msg.message||''}`, isErr ? 'warn' : 'info');
+
+        if (msg.type === 'ee_state' || (msg.type === undefined && msg.pos_m)) {
+          const d = msg.type === 'ee_state' ? msg.data : msg;
+          if (d.pos_m) {
+            if (d.pos_m.x !== undefined) document.getElementById('ee-x').textContent = fmt(d.pos_m.x, 3);
+            if (d.pos_m.y !== undefined) document.getElementById('ee-y').textContent = fmt(d.pos_m.y, 3);
+            if (d.pos_m.z !== undefined) document.getElementById('ee-z').textContent = fmt(d.pos_m.z, 3);
+          }
+          if (d.rpy_deg) {
+            if (d.rpy_deg.roll !== undefined) document.getElementById('ee-roll').textContent = fmt(d.rpy_deg.roll, 1);
+            if (d.rpy_deg.pitch !== undefined) document.getElementById('ee-pitch').textContent = fmt(d.rpy_deg.pitch, 1);
+            if (d.rpy_deg.yaw !== undefined) document.getElementById('ee-yaw').textContent = fmt(d.rpy_deg.yaw, 1);
+          }
+          heartbeat();
         }
+
+        if (msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text}`, 'crit');
+
+
+        if (msg.type === 'errors') heartbeat();
+        if (msg.type === 'joint_state') heartbeat();
+
+        if (msg.type === 'cmd_result') {
+          const isErr = msg.status !== 'ok';
+          log(`<b>CMD:</b> ${msg.status.toUpperCase()} - ${msg.message || ''}`, isErr ? 'warn' : 'info');
+        }
+
+
       };
     }
-    function ping(){ if(ws && ws.readyState===1){ ws.send(JSON.stringify({type:'ping', t:Date.now()})); setTimeout(ping, 10000); } }
-    
-    function wsSend(obj){ 
-        if(ws && ws.readyState===1) ws.send(JSON.stringify(obj)); 
-        else console.warn('WS not connected, cannot send command'); 
+    function ping() { if (ws && ws.readyState === 1) { ws.send(JSON.stringify({ type: 'ping', t: Date.now() })); setTimeout(ping, 10000); } }
+
+    function wsSend(obj) {
+      if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj));
+      else console.warn('WS not connected, cannot send command');
     }
 
     function updateSlidersFromTelemetry(jointData) {
-        const anyDirty = dirtyFlags.some(f => f);
-        const badge = document.getElementById('sync-badge');
-        if(anyDirty) {
-            badge.classList.remove('syncing');
-            badge.innerHTML = 'Manual Mode';
-        } else {
-            badge.classList.add('syncing');
-            badge.innerHTML = '<div class="live-dot"></div> Live Sync';
+      const anyDirty = dirtyFlags.some(f => f);
+      const badge = document.getElementById('sync-badge');
+      if (anyDirty) {
+        badge.classList.remove('syncing');
+        badge.innerHTML = 'Manual Mode';
+      } else {
+        badge.classList.add('syncing');
+        badge.innerHTML = '<div class="live-dot"></div> Live Sync';
+      }
+
+      const currentPos = [0, 0, 0, 0, 0];
+      jointData.forEach((j, i) => {
+        if (i < 5) currentPos[i] = j.pos_deg;
+      });
+
+      joints.forEach((id, idx) => {
+        if (!dirtyFlags[idx]) {
+          const range = document.getElementById(`range-j${id}`);
+          const val = document.getElementById(`val-j${id}`);
+          const v = currentPos[idx];
+
+          if (Math.abs(parseFloat(range.value) - v) > 0.05) {
+            range.value = v;
+            val.value = v.toFixed(1);
+          }
         }
-
-        const currentPos = [0,0,0,0,0];
-        jointData.forEach((j, i) => {
-            if(i < 5) currentPos[i] = j.pos_deg;
-        });
-
-        joints.forEach((id, idx) => {
-            if(!dirtyFlags[idx]) {
-                const range = document.getElementById(`range-j${id}`);
-                const val = document.getElementById(`val-j${id}`);
-                const v = currentPos[idx];
-                
-                if (Math.abs(parseFloat(range.value) - v) > 0.05) {
-                    range.value = v;
-                    val.value = v.toFixed(1);
-                }
-            }
-        });
+      });
     }
 
     let ros = null, viewer = null, tfClient = null, urdfClient = null;
-    function rosConnect(){
-      if(ros && ros.isConnected) return;
+    function rosConnect() {
+      if (ros && ros.isConnected) return;
       ros = new ROSLIB.Ros({ url: CONFIG.ROSBRIDGE_URL });
-      ros.on('connection', ()=>{ setDot('ros', true); log('<b>ROS:</b> Connected', 'info'); initViewer(); });
-      ros.on('error', ()=>{ setDot('ros', false); log('<b>ROS:</b> Error', 'crit'); });
-      ros.on('close', ()=>{ setDot('ros', false); setTimeout(rosConnect, 2000); });
+      ros.on('connection', () => { setDot('ros', true); log('<b>ROS:</b> Connected', 'info'); initViewer(); });
+      ros.on('error', () => { setDot('ros', false); log('<b>ROS:</b> Error', 'crit'); });
+      ros.on('close', () => { setDot('ros', false); setTimeout(rosConnect, 2000); });
     }
 
-    function initViewer(){
+    function initViewer() {
       const el = document.getElementById('viz3d');
-      if(viewer) { el.innerHTML = ''; viewer = null; } 
-      
+      if (viewer) { el.innerHTML = ''; viewer = null; }
+
       viewer = new ROS3D.Viewer({ divID: 'viz3d', width: el.clientWidth, height: el.clientHeight, antialias: true, background: '#0f172a', intensity: 1.5 });
-      window.addEventListener('resize', ()=>{ if(viewer && el.clientWidth > 0) viewer.resize(el.clientWidth, el.clientHeight); });
+      window.addEventListener('resize', () => { if (viewer && el.clientWidth > 0) viewer.resize(el.clientWidth, el.clientHeight); });
       viewer.addObject(new ROS3D.Grid({ color: '#334155', num_cells: 20, cell_size: 10 }));
-      
-      if(!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 20 });
-      if(!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
+
+      if (!tfClient) tfClient = new ROSLIB.TFClient({ ros, fixedFrame: CONFIG.FIXED_FRAME, angularThres: 0.01, transThres: 0.01, rate: 20 });
+      if (!urdfClient) urdfClient = new ROS3D.UrdfClient({ ros, tfClient, rootObject: viewer.scene, param: CONFIG.ROBOT_DESCRIPTION_PARAM, path: CONFIG.URDF_PATH });
     }
 
-    document.getElementById('btn-connect').onclick    = ()=>{ wsConnect(); rosConnect(); };
-    document.getElementById('btn-disconnect').onclick = ()=>{ try{ws.close();}catch{} try{ros.close();}catch{} };
-    document.getElementById('btn-initial').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'go_initial' });
-    document.getElementById('btn-safety-reset').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safety_reset' });
-    document.getElementById('btn-safe-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'safe_shutdown' });
-    document.getElementById('btn-force-shutdown').onclick = ()=> wsSend({ type:'command', command_id:newCid(), cmd:'force_shutdown' });
+    document.getElementById('btn-connect').onclick = () => { wsConnect(); rosConnect(); };
+    document.getElementById('btn-disconnect').onclick = () => { try { ws.close(); } catch { } try { ros.close(); } catch { } };
+    document.getElementById('btn-initial').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'go_initial' });
+    document.getElementById('btn-safety-reset').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'safety_reset' });
+    document.getElementById('btn-safe-shutdown').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'safe_shutdown' });
+    document.getElementById('btn-force-shutdown').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'force_shutdown' });
+    document.getElementById('btn-reconnect-port').onclick = () => wsSend({ type: 'command', command_id: newCid(), cmd: 'reconnect_port' });
 
 
-    document.getElementById('btn-send-joints').onclick = ()=>{
-      const vals = ['j1','j2','j3','j4','j5'].map(id=>parseFloat(document.getElementById(id).value));
+    document.getElementById('btn-send-joints').onclick = () => {
+      const vals = ['j1', 'j2', 'j3', 'j4', 'j5'].map(id => parseFloat(document.getElementById(id).value));
       if (vals.some(v => Number.isNaN(v))) { alert('Invalid joint inputs'); return; }
-      wsSend({ type:'command', command_id:newCid(), cmd:'set_joint_deg', joints: vals });
+      wsSend({ type: 'command', command_id: newCid(), cmd: 'set_joint_deg', joints: vals });
     };
 
-    document.getElementById('btn-send-xyz').onclick = ()=>{
+    document.getElementById('btn-send-xyz').onclick = () => {
       const x = parseFloat(document.getElementById('in-x').value);
       const y = parseFloat(document.getElementById('in-y').value);
       const z = parseFloat(document.getElementById('in-z').value);
-      if([x,y,z].some(v=>Number.isNaN(v))){ alert('Invalid coordinates'); return; }
-      wsSend({ type:'command', command_id:newCid(), cmd:'set_target_xyz', target:{x,y,z}, units:'cm' });
+      if ([x, y, z].some(v => Number.isNaN(v))) { alert('Invalid coordinates'); return; }
+      wsSend({ type: 'command', command_id: newCid(), cmd: 'set_target_xyz', target: { x, y, z }, units: 'cm' });
     };
 
     function markDirty(idx) {
-        dirtyFlags[idx] = true;
-        document.getElementById(`range-j${joints[idx]}`).classList.add('modified');
-        document.getElementById(`val-j${joints[idx]}`).classList.add('modified');
-        
-        const badge = document.getElementById('sync-badge');
-        badge.classList.remove('syncing');
-        badge.innerHTML = 'Manual Mode';
+      dirtyFlags[idx] = true;
+      document.getElementById(`range-j${joints[idx]}`).classList.add('modified');
+      document.getElementById(`val-j${joints[idx]}`).classList.add('modified');
+
+      const badge = document.getElementById('sync-badge');
+      badge.classList.remove('syncing');
+      badge.innerHTML = 'Manual Mode';
     }
 
     function resetSync() {
-        dirtyFlags.fill(false);
-        joints.forEach(id => {
-            document.getElementById(`range-j${id}`).classList.remove('modified');
-            document.getElementById(`val-j${id}`).classList.remove('modified');
-        });
+      dirtyFlags.fill(false);
+      joints.forEach(id => {
+        document.getElementById(`range-j${id}`).classList.remove('modified');
+        document.getElementById(`val-j${id}`).classList.remove('modified');
+      });
     }
 
     document.getElementById('btn-resync').onclick = resetSync;
 
     joints.forEach((id, idx) => {
-        const range = document.getElementById(`range-j${id}`);
-        const val = document.getElementById(`val-j${id}`);
+      const range = document.getElementById(`range-j${id}`);
+      const val = document.getElementById(`val-j${id}`);
 
-        range.addEventListener('input', (e) => {
-            val.value = e.target.value;
-            markDirty(idx);
-        });
+      range.addEventListener('input', (e) => {
+        val.value = e.target.value;
+        markDirty(idx);
+      });
 
-        val.addEventListener('input', (e) => {
-            let v = parseFloat(e.target.value);
-            if(!isNaN(v)) {
-                if(v < parseFloat(range.min)) v = parseFloat(range.min);
-                if(v > parseFloat(range.max)) v = parseFloat(range.max);
-                range.value = v;
-                markDirty(idx);
-            }
-        });
+      val.addEventListener('input', (e) => {
+        let v = parseFloat(e.target.value);
+        if (!isNaN(v)) {
+          if (v < parseFloat(range.min)) v = parseFloat(range.min);
+          if (v > parseFloat(range.max)) v = parseFloat(range.max);
+          range.value = v;
+          markDirty(idx);
+        }
+      });
     });
 
     document.getElementById('btn-submit-sliders').onclick = () => {
-        const currentJointsDeg = joints.map(id => {
-            return parseFloat(document.getElementById(`val-j${id}`).value) || 0;
-        });
-        
-        wsSend({ 
-            type:'command', 
-            command_id: 'jog_' + newCid(), 
-            cmd:'set_joint_deg', 
-            joints: currentJointsDeg 
-        });
-        log('<b>Control:</b> Manual Jog Command Sent', 'info');
+      const currentJointsDeg = joints.map(id => {
+        return parseFloat(document.getElementById(`val-j${id}`).value) || 0;
+      });
+
+      wsSend({
+        type: 'command',
+        command_id: 'jog_' + newCid(),
+        cmd: 'set_joint_deg',
+        joints: currentJointsDeg
+      });
+      log('<b>Control:</b> Manual Jog Command Sent', 'info');
     };
 
     fetch('config.json')
       .then(r => r.json())
-      .then(data => { if(data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
+      .then(data => { if (data.rosbridge_ip) CONFIG.ROSBRIDGE_URL = data.rosbridge_ip; })
       .catch(() => { console.log('Using default IP'); })
       .finally(() => {
-          if(CONFIG.AUTO_CONNECT){ wsConnect(); rosConnect(); }
-          log('System ready');
+        if (CONFIG.AUTO_CONNECT) { wsConnect(); rosConnect(); }
+        log('System ready');
       });
   </script>
 </body>
+
 </html>
