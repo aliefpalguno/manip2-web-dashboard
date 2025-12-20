@@ -657,6 +657,32 @@
             <div class="body padless">
               <div id="viz3d"></div>
             </div>
+
+            <div style="padding: 16px 20px; border-top: 1px solid var(--border);">
+              <div
+                style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:12px;">
+                End Effector State</div>
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">POSITION (m)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    X: <span id="ee-x">—</span>&nbsp;
+                    Y: <span id="ee-y">—</span>&nbsp;
+                    Z: <span id="ee-z">—</span>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">ORIENTATION (deg)</div>
+                  <div
+                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
+                    R: <span id="ee-roll">—</span>&nbsp;
+                    P: <span id="ee-pitch">—</span>&nbsp;
+                    Y: <span id="ee-yaw">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </section>
 
           <section class="card">
@@ -686,26 +712,10 @@
             <div style="padding: 16px 20px; border-top: 1px solid var(--border);">
               <div
                 style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:12px;">
-                End Effector State</div>
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
-                <div>
-                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">POSITION (m)</div>
-                  <div
-                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
-                    X: <span id="ee-x">—</span>&nbsp;
-                    Y: <span id="ee-y">—</span>&nbsp;
-                    Z: <span id="ee-z">—</span>
-                  </div>
-                </div>
-                <div>
-                  <div style="font-size:10px; color:var(--muted); margin-bottom:4px;">ORIENTATION (deg)</div>
-                  <div
-                    style="font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--ink); font-weight:500;">
-                    R: <span id="ee-roll">—</span>&nbsp;
-                    P: <span id="ee-pitch">—</span>&nbsp;
-                    Y: <span id="ee-yaw">—</span>
-                  </div>
-                </div>
+                Robot Notifications
+              </div>
+              <div id="notification-area" style="min-height:40px; font-size:13px; color:var(--ink);">
+                <span style="color:var(--muted); font-style:italic;">No active notifications</span>
               </div>
             </div>
 
@@ -973,7 +983,37 @@
           heartbeat();
         }
 
-        if (msg.type === 'safety_event') log(`<b>SAFETY:</b> ${msg.text || JSON.stringify(msg)}`, 'crit');
+        if (msg.type === 'safety_event') {
+          // Parse the text content which is expected to be a JSON string from Node-RED
+          let safetyData = {};
+          try {
+            // checking if msg.text is object or string to be safe
+            if (typeof msg.text === 'object') safetyData = msg.text;
+            else safetyData = JSON.parse(msg.text || '{}');
+          } catch (e) {
+            console.warn('Failed to parse safety event text:', e);
+          }
+
+          // Use the 'human' array for display
+          const messages = Array.isArray(safetyData.human) ? safetyData.human : [];
+
+          const notifEl = document.getElementById('notification-area');
+          if (notifEl) {
+            if (messages.length > 0) {
+              // Pretty print logic
+              notifEl.innerHTML = messages.map(m =>
+                `<div style="padding:6px 0; border-bottom:1px dashed var(--border); last-child:border:none; color:var(--crit); font-weight:500;">
+                   • ${m}
+                 </div>`
+              ).join('');
+            } else {
+              notifEl.innerHTML = '<span style="color:var(--muted); font-style:italic;">System Normal</span>';
+            }
+          }
+
+          // Still log to the debug log
+          log(`<b>SAFETY:</b> ${messages.join(' | ') || 'Event Triggered'}`, 'crit');
+        }
 
         if (msg.type === 'eval_result') {
           const d = msg.data;
